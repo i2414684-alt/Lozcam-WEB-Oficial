@@ -25,7 +25,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   {
     label: 'Dashboard',
-    href: '/',
+    href: '/dashboard',
     icon: <LayoutDashboard size={18} />,
     roles: ['gerente_general', 'subgerente', 'administrador'],
   },
