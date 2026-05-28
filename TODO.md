@@ -1,11 +1,6 @@
 # TODO
 
-- [x] PASO 2 — Crear página lista de reportes
-- [x] PASO 3 — Crear formulario nuevo reporte
-- [x] PASO 4 — Crear página detalle de reporte
-- [x] PASO 5 — Crear formulario nueva incidencia
-- [x] PASO 6 — Actualizar Sidebar para que Dashboard apunte a /dashboard
-- [x] PASO 7 — Verificar módulo reportes (npm run dev + rutas /reportes)
-
-
+- [ ] CAMBIO 1: Actualizar `middleware.ts` para permitir acceso público a `/landing` y evitar redirección hacia `/login`.
+- [ ] CAMBIO 2: Mover `app/(marketing)/landing/page.tsx` a `app/(public)/landing/page.tsx` copiando el mismo contenido y eliminar el archivo original.
+- [ ] Ejecutar `npm run dev` y validar que `/landing` carga sin redirección.
 
