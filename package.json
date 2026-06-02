@@ -2,8 +2,8 @@
   "name": "lozcam-web-oficial",
   "version": "0.1.0",
   "private": true,
-"scripts": { 
-    "postinstall": "node -e \"console.log('postinstall ok')\"", 
+  "scripts": {
+    "postinstall": "node -e \"console.log('postinstall ok')\"",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -15,6 +15,7 @@
     "@supabase/supabase-js": "^2.106.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.3.0",
+    "exceljs": "^4.4.0",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
     "react": "19.2.4",

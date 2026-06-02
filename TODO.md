@@ -1,6 +1,7 @@
-# TODO
+# TODO - lozcam-web-oficial
 
-- [ ] CAMBIO 1: Actualizar `middleware.ts` para permitir acceso público a `/landing` y evitar redirección hacia `/login`.
-- [ ] CAMBIO 2: Mover `app/(marketing)/landing/page.tsx` a `app/(public)/landing/page.tsx` copiando el mismo contenido y eliminar el archivo original.
-- [ ] Ejecutar `npm run dev` y validar que `/landing` carga sin redirección.
+- [x] PASO presupuestos/page.tsx: Verificar import FilaTabla y corregir archivo para incluirlo.
+- [x] PASO pagos/page.tsx: Reemplazo completo solicitado (previo intento parcial). 
+- [ ] PASO pagos/page.tsx: Ejecutar `cat ... | head -6`.
+- [ ] PASO pagos/page.tsx: Verificar en runtime (npm run dev /pagos) que no hay error, KPI y tabla cargan y hover funciona.
 

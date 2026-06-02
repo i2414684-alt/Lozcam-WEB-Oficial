@@ -1,84 +1,111 @@
 import { getClientes } from '@/lib/supabase/queries/clientes'
 import Link from 'next/link'
 import { formatFecha } from '@/lib/utils/formatters'
+import { FilaTabla } from './TablaHover'
 
 export default async function ClientesPage() {
   const clientes = await getClientes()
+
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Clientes</h1>
-          <p className="text-gray-500 text-sm mt-0.5">
+          <h1 className="text-2xl font-bold" style={tp}>
+            Clientes
+          </h1>
+          <p className="text-sm mt-0.5" style={ts}>
             {clientes.length} cliente{clientes.length !== 1 ? 's' : ''} registrado
             {clientes.length !== 1 ? 's' : ''}
           </p>
         </div>
         <Link
           href="/clientes/nuevo"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           + Nuevo cliente
         </Link>
       </div>
 
       {clientes.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
-          <p className="text-gray-400 text-sm">No hay clientes registrados aún</p>
+        <div className="rounded-xl p-12 text-center" style={cardStyle}>
+          <p className="text-sm" style={ts}>
+            No hay clientes registrados aún
+          </p>
           <Link
             href="/clientes/nuevo"
-            className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+            className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
           >
             Registrar primer cliente
           </Link>
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+        <div className="rounded-xl overflow-hidden" style={cardStyle}>
           <table className="w-full text-sm">
-            <thead className="bg-gray-50 border-b border-gray-200">
-              <tr>
-                <th className="text-left px-4 py-3 text-gray-600 font-medium">Cliente</th>
-                <th className="text-left px-4 py-3 text-gray-600 font-medium">DNI / RUC</th>
-                <th className="text-left px-4 py-3 text-gray-600 font-medium">Contacto</th>
-                <th className="text-left px-4 py-3 text-gray-600 font-medium">Distrito</th>
-                <th className="text-left px-4 py-3 text-gray-600 font-medium">Registrado</th>
-                <th className="text-left px-4 py-3 text-gray-600 font-medium">Acción</th>
+            <thead style={{ background: 'var(--table-header-bg)' }}>
+              <tr style={{ borderBottom: '2px solid var(--table-border)' }}>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
+                  Cliente
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
+                  DNI / RUC
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
+                  Contacto
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
+                  Distrito
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
+                  Registrado
+                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
+                  Acción
+                </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100">
-              {clientes.map((cliente) => (
-                <tr key={cliente.id} className="hover:bg-gray-50 transition-colors">
+            <tbody>
+              {clientes.map((cliente: any) => (
+                <FilaTabla key={cliente.id}>
                   <td className="px-4 py-3">
-                    <div className="font-medium text-gray-900">
+                    <div className="font-medium" style={tp}>
                       {cliente.tipo_persona === 'natural'
                         ? `${cliente.nombres} ${cliente.apellidos}`
                         : cliente.razon_social}
                     </div>
-                    <div className="text-xs text-gray-400 mt-0.5">
-                      {cliente.tipo_persona === 'natural'
-                        ? 'Persona natural'
-                        : 'Persona jurídica'}
+                    <div className="text-xs mt-0.5" style={ts}>
+                      {cliente.tipo_persona === 'natural' ? 'Persona natural' : 'Persona jurídica'}
                     </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">
+                  <td className="px-4 py-3 text-sm" style={ts}>
                     {cliente.tipo_persona === 'natural' ? cliente.dni : cliente.ruc}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="text-gray-600">{cliente.email ?? '—'}</div>
-                    <div className="text-xs text-gray-400">{cliente.telefono ?? '—'}</div>
+                    <div className="text-sm" style={ts}>
+                      {cliente.email ?? '—'}
+                    </div>
+                    <div className="text-xs mt-0.5" style={ts}>
+                      {cliente.telefono ?? '—'}
+                    </div>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{cliente.distrito ?? '—'}</td>
-                  <td className="px-4 py-3 text-gray-500">{formatFecha(cliente.created_at)}</td>
+                  <td className="px-4 py-3 text-sm" style={ts}>
+                    {cliente.distrito ?? '—'}
+                  </td>
+                  <td className="px-4 py-3 text-xs" style={ts}>
+                    {formatFecha(cliente.created_at)}
+                  </td>
                   <td className="px-4 py-3">
                     <Link
                       href={`/clientes/${cliente.id}`}
-                      className="text-blue-600 hover:text-blue-800 font-medium"
+                      className="text-amber-500 hover:text-amber-400 font-medium text-sm"
                     >
                       Ver
                     </Link>
                   </td>
-                </tr>
+                </FilaTabla>
               ))}
             </tbody>
           </table>

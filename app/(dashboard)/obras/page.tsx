@@ -10,25 +10,29 @@ export default async function ObrasPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Obras</h1>
-          <p className="text-gray-500 text-sm mt-0.5">
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Obras</h1>
+
+          <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>
             {obras.length} obra{obras.length !== 1 ? 's' : ''} registrada{obras.length !== 1 ? 's' : ''}
           </p>
         </div>
         <Link
           href="/obras/nueva"
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+          className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           + Nueva obra
         </Link>
       </div>
 
       {obras.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-12 text-center">
+        <div
+          className="rounded-xl p-12 text-center"
+          style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)' }}
+        >
           <p className="text-gray-400 text-sm">No hay obras registradas aún</p>
           <Link
             href="/obras/nueva"
-            className="mt-4 inline-block bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+            className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
           >
             Registrar primera obra
           </Link>
@@ -39,22 +43,21 @@ export default async function ObrasPage() {
             <Link
               key={obra.id}
               href={`/obras/${obra.id}`}
-              className="bg-white rounded-xl border border-gray-200 p-5 hover:border-blue-300 hover:shadow-sm transition-all"
+              className="rounded-xl p-5 hover:shadow-md transition-all"
+              style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)' }}
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-1">
-                    <h3 className="font-semibold text-gray-900">{obra.nombre}</h3>
+                    <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{obra.nombre}</h3>
                     {obra.codigo && (
                       <span className="text-xs text-gray-400 font-mono">{obra.codigo}</span>
                     )}
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_OBRA_COLOR[obra.estado]}`}
-                    >
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_OBRA_COLOR[obra.estado]}`}>
                       {ESTADO_OBRA_LABEL[obra.estado]}
                     </span>
                   </div>
-                  <p className="text-sm text-gray-500 mb-3">
+                  <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
                     {TIPO_SERVICIO_LABEL[obra.tipo_servicio]} · {obra.direccion}
                     {obra.distrito && `, ${obra.distrito}`}
                   </p>
@@ -75,7 +78,7 @@ export default async function ObrasPage() {
                   </div>
                 </div>
                 <div className="text-right ml-4">
-                  <p className="text-lg font-bold text-gray-900">{formatPEN(obra.monto_contrato)}</p>
+                  <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{formatPEN(obra.monto_contrato)}</p>
                   <p className="text-xs text-gray-400 mt-0.5">monto contrato</p>
                 </div>
               </div>
@@ -86,5 +89,4 @@ export default async function ObrasPage() {
     </div>
   )
 }
-
 
