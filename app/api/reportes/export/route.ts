@@ -1,10 +1,7 @@
 import ExcelJS from 'exceljs'
-import {
-  getDatosReporte,
-  TIPO_SERVICIO, ESTADO_OBRA, METODO_PAGO, ESTADO_PAGO, ESTADO_SOLICITUD, PRIORIDAD,
-} from '@/lib/reportes/datos-demo'
+import { getDatosReporte } from '@/lib/reportes/datos-demo'
 
-export const runtime = 'nodejs' // ExcelJS necesita Node, no Edge
+export const runtime = 'nodejs'
 
 const NAVY = 'FF0B1727'
 const AMBER = 'FFF59E0B'
@@ -27,7 +24,6 @@ function tituloHoja(ws: ExcelJS.Worksheet, ncols: number, texto: string) {
   c.alignment = { vertical: 'middle', horizontal: 'left', indent: 1 }
   ws.getRow(1).height = 32
 }
-
 function encabezados(ws: ExcelJS.Worksheet, row: number, headers: string[], widths: number[]) {
   headers.forEach((h, i) => {
     const c = ws.getCell(row, i + 1)
@@ -40,7 +36,6 @@ function encabezados(ws: ExcelJS.Worksheet, row: number, headers: string[], widt
   })
   ws.getRow(row).height = 22
 }
-
 function celda(ws: ExcelJS.Worksheet, r: number, col: number, val: ExcelJS.CellValue, opts: { fmt?: string; bold?: boolean; align?: 'left' | 'center' | 'right' } = {}) {
   const c = ws.getCell(r, col)
   c.value = val
@@ -57,7 +52,27 @@ export async function GET() {
   wb.creator = 'GRUPO LOZCAM S.A.C'
   wb.created = new Date()
 
-  // ───── RESUMEN ─────
+  const enEjecucion = obras.filter(o => (o.estado || '').toLowerCase().includes('ejecuc')).length
+  const totalContratos = obras.reduce((s, o) => s + o.monto_contrato, 0)
+  const cobrado = pagos.filter(p => p.estado === 'Pagado').reduce((s, p) => s + p.monto, 0)
+  const porCobrar = totalContratos - cobrado
+
+  // deudas por cliente (contratado - pagado)
+  const porCli = new Map<number, { cliente: string; contratado: number; pagado: number }>()
+  for (const o of obras) {
+    if (o.cliente_id == null) continue
+    const e = porCli.get(o.cliente_id) ?? { cliente: o.cliente, contratado: 0, pagado: 0 }
+    e.contratado += o.monto_contrato
+    porCli.set(o.cliente_id, e)
+  }
+  for (const p of pagos) {
+    if (p.cliente_id == null || p.estado !== 'Pagado') continue
+    const e = porCli.get(p.cliente_id)
+    if (e) e.pagado += p.monto
+  }
+  const deudas = [...porCli.values()].map(d => ({ ...d, saldo: d.contratado - d.pagado })).sort((a, b) => b.saldo - a.saldo)
+
+  // RESUMEN
   const res = wb.addWorksheet('Resumen', { views: [{ showGridLines: false }] })
   res.mergeCells('A1:B1')
   const tt = res.getCell('A1')
@@ -71,67 +86,75 @@ export async function GET() {
   res.getCell('A2').font = { name: 'Arial', size: 9, italic: true, color: { argb: 'FF6B7280' } }
   res.getColumn(1).width = 34
   res.getColumn(2).width = 22
-
-  const cobrado = pagos.filter(p => p.estado === 'pagado').reduce((s, p) => s + p.monto, 0)
-  const porCobrar = pagos.filter(p => ['pendiente', 'verificando'].includes(p.estado)).reduce((s, p) => s + p.monto, 0)
   const kpis: [string, number, string?][] = [
     ['Total de obras', obras.length],
-    ['Obras en ejecución', obras.filter(o => o.estado === 'en_ejecucion').length],
+    ['Obras en ejecución', enEjecucion],
     ['Clientes activos', clientes.filter(c => c.activo).length],
-    ['Solicitudes nuevas', solicitudes.filter(s => s.estado === 'nueva').length],
-    ['Monto total en contratos (S/)', obras.reduce((s, o) => s + o.monto_contrato, 0), PEN],
+    ['Solicitudes nuevas', solicitudes.filter(s => s.estado === 'Nueva').length],
+    ['Monto total en contratos (S/)', totalContratos, PEN],
     ['Total cobrado (S/)', cobrado, PEN],
-    ['Por cobrar - pendiente (S/)', porCobrar, PEN],
+    ['Por cobrar (S/)', porCobrar, PEN],
   ]
   encabezados(res, 4, ['Indicador', 'Valor'], [34, 22])
-  res.getCell('A4').alignment = { horizontal: 'left', indent: 1 }
-  res.getCell('B4').alignment = { horizontal: 'right', indent: 1 }
   let row = 5
-  for (const [label, val, fmt] of kpis) {
-    celda(res, row, 1, label, { align: 'left' })
+  for (const [lab, val, fmt] of kpis) {
+    celda(res, row, 1, lab)
     const b = celda(res, row, 2, val, { fmt, bold: true, align: 'right' })
     b.font = { name: 'Arial', size: 11, bold: true, color: { argb: NAVY } }
     res.getRow(row).height = 22
     row++
   }
 
-  // ───── OBRAS ─────
-  const wo = wb.addWorksheet('Obras', { views: [{ state: 'frozen', ySplit: 2 }] })
-  tituloHoja(wo, 9, 'Obras')
-  encabezados(wo, 2, ['Código', 'Nombre de obra', 'Cliente', 'Tipo de servicio', 'Estado', 'Distrito', 'Área (m²)', 'Monto contrato (S/)', '% Avance'], [15, 34, 30, 18, 15, 20, 12, 18, 11])
+  // DEUDAS POR CLIENTE
+  const wd = wb.addWorksheet('Deudas por cliente', { views: [{ state: 'frozen', ySplit: 2 }] })
+  tituloHoja(wd, 4, 'Deudas por cliente')
+  encabezados(wd, 2, ['Cliente', 'Contratado (S/)', 'Pagado (S/)', 'Saldo pendiente (S/)'], [36, 20, 20, 22])
   let r = 3
-  for (const o of obras) {
-    celda(wo, r, 1, o.codigo); celda(wo, r, 2, o.nombre); celda(wo, r, 3, o.cliente)
-    celda(wo, r, 4, TIPO_SERVICIO[o.tipo_servicio] ?? o.tipo_servicio)
-    celda(wo, r, 5, ESTADO_OBRA[o.estado] ?? o.estado, { align: 'center' })
-    celda(wo, r, 6, o.distrito)
-    celda(wo, r, 7, o.area_m2, { fmt: '#,##0', align: 'right' })
-    celda(wo, r, 8, o.monto_contrato, { fmt: PEN, align: 'right' })
-    celda(wo, r, 9, o.avance / 100, { fmt: '0%', align: 'center' })
+  for (const d of deudas) {
+    celda(wd, r, 1, d.cliente)
+    celda(wd, r, 2, d.contratado, { fmt: PEN, align: 'right' })
+    celda(wd, r, 3, d.pagado, { fmt: PEN, align: 'right' })
+    const sc = celda(wd, r, 4, d.saldo, { fmt: PEN, align: 'right', bold: d.saldo > 0 })
+    if (d.saldo > 0) sc.font = { name: 'Arial', size: 10, bold: true, color: { argb: 'FFA32D2D' } }
     r++
   }
-  celda(wo, r, 7, 'TOTAL', { bold: true, align: 'right' })
-  celda(wo, r, 8, { formula: `SUM(H3:H${r - 1})` }, { fmt: PEN, bold: true, align: 'right' })
-  celda(wo, r, 9, { formula: `AVERAGE(I3:I${r - 1})` }, { fmt: '0%', bold: true, align: 'center' })
-  wo.autoFilter = `A2:I${r - 1}`
+  celda(wd, r, 1, 'TOTAL', { bold: true, align: 'right' })
+  celda(wd, r, 2, { formula: `SUM(B3:B${r - 1})` }, { fmt: PEN, bold: true, align: 'right' })
+  celda(wd, r, 3, { formula: `SUM(C3:C${r - 1})` }, { fmt: PEN, bold: true, align: 'right' })
+  celda(wd, r, 4, { formula: `SUM(D3:D${r - 1})` }, { fmt: PEN, bold: true, align: 'right' })
+  wd.autoFilter = `A2:D${Math.max(r - 1, 2)}`
 
-  // ───── PAGOS ─────
+  // OBRAS
+  const wo = wb.addWorksheet('Obras', { views: [{ state: 'frozen', ySplit: 2 }] })
+  tituloHoja(wo, 7, 'Obras')
+  encabezados(wo, 2, ['Código', 'Nombre de obra', 'Cliente', 'Tipo de servicio', 'Estado', 'Distrito', 'Monto contrato (S/)'], [15, 32, 28, 18, 15, 18, 18])
+  r = 3
+  for (const o of obras) {
+    celda(wo, r, 1, o.codigo); celda(wo, r, 2, o.nombre); celda(wo, r, 3, o.cliente)
+    celda(wo, r, 4, o.tipo_servicio); celda(wo, r, 5, o.estado, { align: 'center' }); celda(wo, r, 6, o.distrito)
+    celda(wo, r, 7, o.monto_contrato, { fmt: PEN, align: 'right' })
+    r++
+  }
+  celda(wo, r, 6, 'TOTAL', { bold: true, align: 'right' })
+  celda(wo, r, 7, { formula: `SUM(G3:G${r - 1})` }, { fmt: PEN, bold: true, align: 'right' })
+  wo.autoFilter = `A2:G${Math.max(r - 1, 2)}`
+
+  // PAGOS
   const wp = wb.addWorksheet('Pagos', { views: [{ state: 'frozen', ySplit: 2 }] })
   tituloHoja(wp, 7, 'Pagos de clientes')
-  encabezados(wp, 2, ['Fecha', 'Concepto', 'Obra', 'Cliente', 'Método de pago', 'Estado', 'Monto (S/)'], [12, 30, 32, 30, 20, 14, 16])
+  encabezados(wp, 2, ['Fecha', 'Concepto', 'Obra', 'Cliente', 'Método de pago', 'Estado', 'Monto (S/)'], [12, 28, 30, 28, 20, 14, 16])
   r = 3
   for (const p of pagos) {
     celda(wp, r, 1, p.fecha, { align: 'center' }); celda(wp, r, 2, p.concepto); celda(wp, r, 3, p.obra); celda(wp, r, 4, p.cliente)
-    celda(wp, r, 5, METODO_PAGO[p.metodo_pago] ?? p.metodo_pago)
-    celda(wp, r, 6, ESTADO_PAGO[p.estado] ?? p.estado, { align: 'center' })
+    celda(wp, r, 5, p.metodo_pago); celda(wp, r, 6, p.estado, { align: 'center' })
     celda(wp, r, 7, p.monto, { fmt: PEN, align: 'right' })
     r++
   }
   celda(wp, r, 6, 'TOTAL', { bold: true, align: 'right' })
   celda(wp, r, 7, { formula: `SUM(G3:G${r - 1})` }, { fmt: PEN, bold: true, align: 'right' })
-  wp.autoFilter = `A2:G${r - 1}`
+  wp.autoFilter = `A2:G${Math.max(r - 1, 2)}`
 
-  // ───── CLIENTES ─────
+  // CLIENTES
   const wc = wb.addWorksheet('Clientes', { views: [{ state: 'frozen', ySplit: 2 }] })
   tituloHoja(wc, 7, 'Clientes')
   encabezados(wc, 2, ['Tipo', 'Nombre / Razón social', 'Documento', 'Email', 'Teléfono', 'Distrito', 'Estado'], [12, 32, 18, 28, 16, 20, 12])
@@ -142,22 +165,20 @@ export async function GET() {
     celda(wc, r, 7, c.activo ? 'Activo' : 'Inactivo', { align: 'center' })
     r++
   }
-  wc.autoFilter = `A2:G${r - 1}`
+  wc.autoFilter = `A2:G${Math.max(r - 1, 2)}`
 
-  // ───── SOLICITUDES ─────
+  // SOLICITUDES
   const wsol = wb.addWorksheet('Solicitudes', { views: [{ state: 'frozen', ySplit: 2 }] })
   tituloHoja(wsol, 7, 'Solicitudes de servicio')
   encabezados(wsol, 2, ['Fecha', 'Título', 'Cliente', 'Tipo de servicio', 'Estado', 'Prioridad', 'Presup. ref. (S/)'], [12, 34, 30, 18, 18, 12, 16])
   r = 3
   for (const s of solicitudes) {
     celda(wsol, r, 1, s.fecha, { align: 'center' }); celda(wsol, r, 2, s.titulo); celda(wsol, r, 3, s.cliente)
-    celda(wsol, r, 4, TIPO_SERVICIO[s.tipo_servicio] ?? s.tipo_servicio)
-    celda(wsol, r, 5, ESTADO_SOLICITUD[s.estado] ?? s.estado, { align: 'center' })
-    celda(wsol, r, 6, PRIORIDAD[s.prioridad] ?? s.prioridad, { align: 'center' })
+    celda(wsol, r, 4, s.tipo_servicio); celda(wsol, r, 5, s.estado, { align: 'center' }); celda(wsol, r, 6, s.prioridad, { align: 'center' })
     celda(wsol, r, 7, s.presupuesto_ref, { fmt: PEN, align: 'right' })
     r++
   }
-  wsol.autoFilter = `A2:G${r - 1}`
+  wsol.autoFilter = `A2:G${Math.max(r - 1, 2)}`
 
   const buffer = await wb.xlsx.writeBuffer()
   const fecha = new Date().toISOString().slice(0, 10)
