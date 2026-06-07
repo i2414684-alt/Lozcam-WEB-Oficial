@@ -1,5 +1,19 @@
 import { createClient } from '@/lib/supabase/server'
 import { labelEstadoPago, labelMetodoPago } from '@/lib/labels'
+import ComprobanteModal from '@/components/portal/ComprobanteModal'
+
+type Comprobante = {
+  id: string | number
+  pago_id: string | number
+  tipo: string | null
+  serie: string | null
+  numero: string | null
+  fecha_emision: string | null
+  monto_base: number | null
+  igv: number | null
+  total: number | null
+  estado_sunat: string | null
+}
 
 function EstadoBadge({ estado }: { estado: string | null }) {
   const text = (estado ?? '').toLowerCase()
@@ -37,7 +51,20 @@ export default async function MisPagosPage() {
 
   const list = pagos ?? []
 
+  const { data: comprobantes } = await supabase
+    .from('comprobantes')
+    .select(
+      'id, pago_id, tipo, serie, numero, fecha_emision, monto_base, igv, total, estado_sunat'
+    )
+
+  const comprobantesList = comprobantes ?? []
+  const comprobantesByPagoId = new Map<string, Comprobante>()
+  for (const c of comprobantesList) {
+    comprobantesByPagoId.set(String(c.pago_id), c as any)
+  }
+
   const formatMonto = (monto: number | null) =>
+
     new Intl.NumberFormat('es-PE', {
       style: 'currency',
       currency: 'PEN',
@@ -87,11 +114,12 @@ export default async function MisPagosPage() {
           >
             <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
               <div className="col-span-2">Fecha</div>
-              <div className="col-span-3">Concepto</div>
+              <div className="col-span-2">Concepto</div>
               <div className="col-span-2">Obra</div>
               <div className="col-span-2">Método</div>
               <div className="col-span-1">Estado</div>
               <div className="col-span-2 text-right">Monto</div>
+              <div className="col-span-1 text-center">Doc.</div>
             </div>
           </div>
 
@@ -104,7 +132,7 @@ export default async function MisPagosPage() {
                 <div className="col-span-2 text-sm text-[var(--text-primary)]">
                   {p.fecha_pago ? String(p.fecha_pago).slice(0, 10) : '-'}
                 </div>
-                <div className="col-span-3 text-sm text-[var(--text-primary)]">
+                <div className="col-span-2 text-sm text-[var(--text-primary)]">
                   {p.concepto}
                 </div>
                 <div className="col-span-2 text-sm text-[var(--text-primary)]">
@@ -118,6 +146,13 @@ export default async function MisPagosPage() {
                 </div>
                 <div className="col-span-2 text-right text-sm text-[var(--text-primary)]">
                   {formatMonto(p.monto ?? 0)}
+                </div>
+                <div className="col-span-1 flex justify-center">
+                  {comprobantesByPagoId.has(String(p.id)) ? (
+                    <ComprobanteModal comprobante={comprobantesByPagoId.get(String(p.id)) ?? null} />
+                  ) : (
+                    <span className="text-sm text-[var(--text-secondary)]">—</span>
+                  )}
                 </div>
               </div>
             ))}
