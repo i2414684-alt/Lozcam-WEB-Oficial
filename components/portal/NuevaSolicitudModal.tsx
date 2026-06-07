@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { useTheme } from '@/contexts/ThemeContext'
 import { Plus } from 'lucide-react'
 import { crearSolicitud } from '@/app/(portal)/portal/solicitudes/actions'
 
@@ -28,6 +29,7 @@ function CheckboxField({
 }
 
 export default function NuevaSolicitudModal() {
+  const { isDark } = useTheme()
   const [abierto, setAbierto] = useState(false)
   const [pending, startTransition] = useTransition()
   const [actionError, setActionError] = useState<string | null>(null)
@@ -66,7 +68,7 @@ export default function NuevaSolicitudModal() {
             <div
               className="w-full max-w-2xl rounded-xl border border-[var(--card-border)] shadow-lg overflow-hidden"
               style={{
-                backgroundColor: 'rgba(15, 34, 56, 1)',
+                backgroundColor: isDark ? '#0f2238' : '#ffffff',
                 color: 'inherit',
               }}
             >
