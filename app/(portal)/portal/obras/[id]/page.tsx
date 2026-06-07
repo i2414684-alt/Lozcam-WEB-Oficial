@@ -213,6 +213,39 @@ export default async function ObraDetallePage({ params }: Props) {
     }).format(n)
   }
 
+  const formatFechaMes = (input: string | null | undefined) => {
+    if (!input) return '-'
+    const d = new Date(input)
+    if (Number.isNaN(d.getTime())) return String(input)
+    return new Intl.DateTimeFormat('es-PE', {
+      month: 'short',
+      year: 'numeric',
+    }).format(d)
+  }
+
+  const formatRango = (inicio: string | null | undefined, fin: string | null | undefined) => {
+    if (!inicio && !fin) return '—'
+    return `${formatFechaMes(inicio)} – ${formatFechaMes(fin)}`
+  }
+
+  const plazoEstado = (fechaFin: string | null | undefined) => {
+    if (!fechaFin) return null
+    const fin = new Date(fechaFin)
+    if (Number.isNaN(fin.getTime())) return null
+
+    const hoy = new Date()
+    hoy.setHours(0, 0, 0, 0)
+    fin.setHours(0, 0, 0, 0)
+
+    const diffMs = fin.getTime() - hoy.getTime()
+    const diffDias = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+    if (diffDias < 0) return { label: 'Plazo vencido', tone: 'amber' as const }
+    if (diffDias < 30) return { label: 'Por vencer', tone: 'amber' as const }
+    return { label: 'En plazo', tone: 'green' as const }
+  }
+
+
   const primeraNoCompletada = avanceFases.find(
     (x) =>
       getFaseEstado(
@@ -232,7 +265,14 @@ export default async function ObraDetallePage({ params }: Props) {
 
   const fasesConDatos = avanceFases
 
+  const ultimaFase = [...fasesConDatos]
+    .map(x => x.fase)
+    .slice(-1)[0] as any
+
+  const entregaEstimada = ultimaFase?.fecha_fin ?? null
+
   return (
+
     <div className="space-y-6">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <Link
@@ -294,6 +334,16 @@ export default async function ObraDetallePage({ params }: Props) {
                   {faseActualNombre}
                 </div>
               </div>
+
+              <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-3 sm:col-span-3">
+                <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
+                  Entrega estimada
+                </div>
+                <div className="mt-1 text-sm font-semibold text-[var(--text-primary)]">
+                  {formatFechaMes(entregaEstimada)}
+                </div>
+              </div>
+
             </div>
           </div>
         </div>
@@ -418,15 +468,30 @@ export default async function ObraDetallePage({ params }: Props) {
                     </div>
 
                     {isEnProgreso ? (
-                      <div className="mt-3">
+                      <div className="mt-3 space-y-2">
                         <div className="w-full h-2.5 rounded-full bg-[var(--table-row-hover)] overflow-hidden">
                           <div
                             className="h-full rounded-full"
                             style={{ width: `${Math.max(0, Math.min(100, porcentaje))}%`, background: '#56a2f0' }}
                           />
                         </div>
+
+                        {(() => {
+                          const estadoPlazo = plazoEstado((fase as any).fecha_fin)
+                          if (!estadoPlazo) return null
+                          const isVencido = estadoPlazo.label === 'Plazo vencido' || estadoPlazo.label === 'Por vencer'
+
+                          return (
+                            <div
+                              className={`text-xs font-semibold ${isVencido ? 'text-amber-500' : 'text-emerald-400'}`}
+                            >
+                              {estadoPlazo.label}
+                            </div>
+                          )
+                        })()}
                       </div>
                     ) : null}
+
 
                     {ultimoAvance ? (
                       <div className="mt-3 rounded-lg border border-[var(--table-border)] bg-[var(--card-bg)] p-3">
