@@ -20,6 +20,8 @@ export default async function DashboardLayout({
     .eq('id', user.id)
     .single()
 
+  if (profile?.rol === 'cliente') redirect('/portal')
+
   return (
     <DashboardShell
       sidebar={<Sidebar rol={profile?.rol ?? ''} />}
@@ -28,5 +30,6 @@ export default async function DashboardLayout({
       {children}
     </DashboardShell>
   )
+
 }
 

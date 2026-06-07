@@ -20,6 +20,7 @@ export default async function PortalLayout({
 
   if (profile?.rol !== 'cliente') redirect('/dashboard')
 
+
   return <PortalShell profile={profile}>{children}</PortalShell>
 }
 
