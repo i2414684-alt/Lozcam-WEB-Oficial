@@ -1,4 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
+import NuevaSolicitudModal from '@/components/portal/NuevaSolicitudModal'
+
 
 function EstadoBadge({
   estado,
@@ -53,9 +55,12 @@ export default async function MisSolicitudesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
-        Mis Solicitudes
-      </h1>
+      <div className="flex items-center justify-between">
+        <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
+          Mis Solicitudes
+        </h1>
+        <NuevaSolicitudModal />
+      </div>
 
       {list.length === 0 ? (
         <div
