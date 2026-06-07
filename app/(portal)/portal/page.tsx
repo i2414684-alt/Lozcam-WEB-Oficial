@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import { labelEstadoObra, labelTipoServicio } from '@/lib/labels'
 import {
   MapPin,
   Wallet,
@@ -223,13 +224,13 @@ export default async function PortalPage() {
                       <span aria-hidden className="opacity-50">
                         ·
                       </span>
-                      <span>{obra.tipo_servicio}</span>
+                      <span>{labelTipoServicio(obra.tipo_servicio)}</span>
                     </div>
                   </div>
 
                   <div>
                     <span className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20">
-                      {obra.estado ?? 'Sin estado'}
+                      {labelEstadoObra(obra.estado ?? 'Sin estado')}
                     </span>
                   </div>
                 </div>

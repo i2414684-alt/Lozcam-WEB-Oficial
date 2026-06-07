@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/server'
+import { labelEstadoPago, labelMetodoPago } from '@/lib/labels'
 
 function EstadoBadge({ estado }: { estado: string | null }) {
   const text = (estado ?? '').toLowerCase()
@@ -110,10 +111,10 @@ export default async function MisPagosPage() {
                   {p.obra?.nombre ?? '-'}
                 </div>
                 <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {p.metodo_pago}
+                  {labelMetodoPago(p.metodo_pago)}
                 </div>
                 <div className="col-span-1">
-                  <EstadoBadge estado={p.estado as string | null} />
+                  <EstadoBadge estado={labelEstadoPago(p.estado as string | null)} />
                 </div>
                 <div className="col-span-2 text-right text-sm text-[var(--text-primary)]">
                   {formatMonto(p.monto ?? 0)}

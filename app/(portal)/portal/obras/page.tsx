@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
-
+import { labelEstadoObra, labelTipoServicio } from '@/lib/labels'
 
 function EstadoBadge({ estado }: { estado: string | null }) {
   const text = estado ?? ''
@@ -91,13 +91,13 @@ export default async function MisObrasPage() {
                   {o.nombre}
                 </div>
                 <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {o.tipo_servicio}
+                  {labelTipoServicio(o.tipo_servicio)}
                 </div>
                 <div className="col-span-2 text-sm text-[var(--text-primary)]">
                   {o.distrito}
                 </div>
                 <div className="col-span-2">
-                  <EstadoBadge estado={o.estado as string | null} />
+                  <EstadoBadge estado={labelEstadoObra(o.estado as string | null)} />
                 </div>
                 <div className="col-span-2 text-right text-sm text-[var(--text-primary)] flex items-center justify-end gap-2">
                   {formatMonto(o.monto_contrato as number | null)}

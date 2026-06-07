@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import NuevaSolicitudModal from '@/components/portal/NuevaSolicitudModal'
-
+import { labelEstadoSolicitud, labelPrioridad, labelTipoServicio } from '@/lib/labels'
 
 function EstadoBadge({
   estado,
@@ -99,13 +99,13 @@ export default async function MisSolicitudesPage() {
                   {s.titulo}
                 </div>
                 <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {s.tipo_servicio}
+                  {labelTipoServicio(s.tipo_servicio)}
                 </div>
                 <div className="col-span-2">
-                  <EstadoBadge estado={s.estado} />
+                  <EstadoBadge estado={labelEstadoSolicitud(s.estado)} />
                 </div>
                 <div className="col-span-2">
-                  <EstadoBadge estado={s.prioridad} />
+                  <EstadoBadge estado={labelPrioridad(s.prioridad)} />
                 </div>
               </div>
             ))}

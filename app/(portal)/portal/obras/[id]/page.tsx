@@ -10,6 +10,8 @@ import {
   Building2,
   Layers,
 } from 'lucide-react'
+import { labelEstadoObra, labelEstadoFase, labelTipoServicio } from '@/lib/labels'
+
 
 type Props = {
   params: Promise<{ id: string }>
@@ -301,7 +303,7 @@ export default async function ObraDetallePage({ params }: Props) {
                   {obra.distrito}
                 </span>
                 <span aria-hidden className="opacity-50">·</span>
-                <span>{obra.tipo_servicio}</span>
+                <span>{labelTipoServicio(obra.tipo_servicio)}</span>
                 <span aria-hidden className="opacity-50">·</span>
                 <span className="text-[var(--text-primary)] font-medium">{obra.codigo}</span>
               </div>
@@ -321,9 +323,9 @@ export default async function ObraDetallePage({ params }: Props) {
                 <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                   Estado
                 </div>
-                <div className="mt-2">
-                  <BadgeEstado estado={obra.estado as string | null} />
-                </div>
+                  <div className="mt-2">
+                    <BadgeEstado estado={labelEstadoObra(obra.estado as string | null)} />
+                  </div>
               </div>
 
               <div className="rounded-lg border border-[var(--card-border)] bg-[var(--card-bg)] p-3">
