@@ -52,7 +52,7 @@ export default async function MisPagosPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-white">Mis Pagos y Deudas</h1>
+      <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>Mis Pagos y Deudas</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div

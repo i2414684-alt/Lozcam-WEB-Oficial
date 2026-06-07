@@ -30,8 +30,8 @@ export default async function MisObrasPage() {
     // RLS/errores de query: mostramos empty state seguro
     return (
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-white">Mis Obras</h1>
-        <p className="text-sm text-gray-400">No tienes obras registradas.</p>
+        <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Mis Obras</h1>
+        <p className="text-sm text-[var(--text-secondary)]">No tienes obras registradas.</p>
       </div>
     )
   }
@@ -39,8 +39,8 @@ export default async function MisObrasPage() {
   if (!obras || obras.length === 0) {
     return (
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-white">Mis Obras</h1>
-        <p className="text-sm text-gray-400">No tienes obras registradas</p>
+        <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Mis Obras</h1>
+        <p className="text-sm text-[var(--text-secondary)]">No tienes obras registradas</p>
       </div>
     )
   }
@@ -53,7 +53,8 @@ export default async function MisObrasPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-white">Mis Obras</h1>
+      <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Mis Obras</h1>
+
 
       <div
         className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"

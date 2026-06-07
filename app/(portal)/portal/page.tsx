@@ -1,5 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
+import {
+  Building,
+  Activity,
+  Wallet,
+  ClipboardList,
+} from 'lucide-react'
 
 function EstadoObraBadge({ estado }: { estado: string | null }) {
   const text = (estado ?? '').toLowerCase()
@@ -69,135 +75,190 @@ export default async function PortalPage() {
 
   const solicitudesCount = solicitudesList.length
 
-  const obrasRecientes = obrasList.slice(0, 5)
-  const solicitudesRecientes = solicitudesList.slice(0, 5)
-
   const deudaPendingFormatted = formatMonto(deudaPendiente)
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-white">
-          Bienvenido, {profile?.nombre ?? ''}
-        </h1>
-        <p className="text-sm text-gray-400">Resumen del Portal</p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-        <div
-          className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5"
-        >
-          <div className="text-sm text-gray-400">Mis Obras</div>
-          <div className="text-3xl font-semibold text-white">{misObrasCount}</div>
-        </div>
-
-        <div
-          className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5"
-        >
-          <div className="text-sm text-gray-400">En Ejecución</div>
-          <div className="text-3xl font-semibold text-white">{enEjecucionCount}</div>
-        </div>
-
-        <div
-          className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5"
-        >
-          <div className="text-sm text-gray-400">Deuda Pendiente</div>
-          <div className="text-3xl font-semibold text-white">{deudaPendingFormatted}</div>
-        </div>
-
-        <div
-          className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5"
-        >
-          <div className="text-sm text-gray-400">Solicitudes</div>
-          <div className="text-3xl font-semibold text-white">{solicitudesCount}</div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-white">Mis Obras</h2>
-
-          {obrasRecientes.length === 0 ? (
-            <div className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] p-6">
-              <p className="text-sm text-gray-400">No tienes obras registradas.</p>
+      {/* KPI CARDS */}
+      <div className="grid grid-cols-4 gap-3">
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
+          <div className="flex items-start justify-between">
+            <div className="text-[10px] tracking-wide text-[var(--text-secondary)] uppercase">
+              Mis Obras
             </div>
-          ) : (
-            <div className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden">
-              <div className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]">
-                <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
-                  <div className="col-span-6">Nombre</div>
-                  <div className="col-span-3">Estado</div>
-                  <div className="col-span-3 text-right">Monto</div>
-                </div>
-              </div>
+            <div className="w-8 h-8 rounded-lg bg-blue-500/15 flex items-center justify-center">
+              <Building className="text-blue-400" size={16} />
+            </div>
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+            {misObrasCount}
+          </div>
+          <div className="text-[11px] text-[var(--text-secondary)] mt-1">
+            Total registradas
+          </div>
+        </div>
 
-              <div className="divide-y divide-[var(--table-border)]">
-                {obrasRecientes.map((o: any) => (
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
+          <div className="flex items-start justify-between">
+            <div className="text-[10px] tracking-wide text-[var(--text-secondary)] uppercase">
+              En Ejecución
+            </div>
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+              <Activity className="text-emerald-400" size={16} />
+            </div>
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+            {enEjecucionCount}
+          </div>
+          <div className="text-[11px] text-[var(--text-secondary)] mt-1 inline-flex items-center gap-1">
+            <span
+              className={`inline-block w-2 h-2 rounded-full ${
+                enEjecucionCount > 0 ? 'bg-emerald-400' : 'bg-gray-400'
+              }`}
+            />
+            {enEjecucionCount > 0 ? 'Activa ahora' : 'Sin ejecuciones'}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
+          <div className="flex items-start justify-between">
+            <div className="text-[10px] tracking-wide text-[var(--text-secondary)] uppercase">
+              Deuda Pendiente
+            </div>
+            <div className="w-8 h-8 rounded-lg bg-amber-500/15 flex items-center justify-center">
+              <Wallet className="text-amber-400" size={16} />
+            </div>
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+            {deudaPendingFormatted}
+          </div>
+          <div className="text-[11px] text-[var(--text-secondary)] mt-1">
+            Saldo por pagar
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4">
+          <div className="flex items-start justify-between">
+            <div className="text-[10px] tracking-wide text-[var(--text-secondary)] uppercase">
+              Solicitudes
+            </div>
+            <div className="w-8 h-8 rounded-lg bg-purple-500/15 flex items-center justify-center">
+              <ClipboardList className="text-purple-400" size={16} />
+            </div>
+          </div>
+          <div className="mt-2 text-2xl font-semibold text-[var(--text-primary)]">
+            {solicitudesCount}
+          </div>
+          <div className="text-[11px] text-[var(--text-secondary)] mt-1">
+            {solicitudesCount === 0 ? 'Sin pendientes' : `${solicitudesCount} pendientes`}
+          </div>
+        </div>
+      </div>
+
+      {/* 2 COLUMNAS */}
+      <div className="grid grid-cols-[1.4fr_1fr] gap-4">
+        <section className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 space-y-3">
+          <h2 className="text-base font-semibold text-[var(--text-primary)]">Mis Obras</h2>
+
+          {obrasList.length === 0 ? (
+            <div className="text-sm text-[var(--text-secondary)]">No hay obras registradas.</div>
+          ) : (
+            <div className="space-y-3">
+              {obrasList.slice(0, 8).map((o: any) => {
+                const estadoText = String(o.estado ?? '')
+                const verde = /ejecuc|complet/i.test(estadoText)
+                return (
                   <div
                     key={o.id}
-                    className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
+                    className="flex items-center justify-between gap-3 rounded-xl border border-[var(--table-border)] px-3 py-2"
                   >
-                    <div className="col-span-6 text-sm text-[var(--text-primary)]">
-                      {o.nombre}
+                    <div className="flex items-center gap-3 min-w-0">
+                      <div className="w-9 h-9 rounded-lg bg-blue-500/15 flex items-center justify-center flex-shrink-0">
+                        <Building size={16} className="text-blue-400" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-medium text-[var(--text-primary)] truncate">
+                          {o.nombre}
+                        </div>
+                        <div className="text-xs text-[var(--text-secondary)] truncate">
+                          {o.tipo ?? o.distrito ?? '—'}
+                        </div>
+                      </div>
                     </div>
-                    <div className="col-span-3">
-                      <EstadoObraBadge estado={o.estado} />
-                    </div>
-                    <div className="col-span-3 text-right text-sm text-[var(--text-primary)]">
-                      {formatMonto(Number(o.monto_contrato ?? 0))}
+
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <div className="text-sm font-medium text-[var(--text-primary)]">
+                        {formatMonto(Number(o.monto_contrato ?? 0))}
+                      </div>
+                      <span
+                        className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
+                          verde ? 'bg-emerald-500/10 text-emerald-400' : 'bg-red-500/10 text-red-400'
+                        }`}
+                      >
+                        {o.estado ?? '—'}
+                      </span>
                     </div>
                   </div>
-                ))}
-              </div>
+                )
+              })}
             </div>
           )}
         </section>
 
-        <section className="space-y-3">
-          <h2 className="text-lg font-semibold text-white">Solicitudes recientes</h2>
+        <section className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-5 space-y-3">
+          <h2 className="text-base font-semibold text-[var(--text-primary)]">Estado de pagos</h2>
 
-          {solicitudesRecientes.length === 0 ? (
-            <div className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] p-6">
-              <p className="text-sm text-gray-400">No tienes solicitudes registradas.</p>
-            </div>
+          {pagosList.length === 0 ? (
+            <div className="text-sm text-[var(--text-secondary)]">Sin pagos registrados</div>
           ) : (
-            <div className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden">
-              <div className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]">
-                <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
-                  <div className="col-span-4">Fecha</div>
-                  <div className="col-span-4">Estado</div>
-                  <div className="col-span-4">ID</div>
-                </div>
-              </div>
+            (() => {
+              const total = pagosList.reduce((acc: number, p: any) => acc + Number(p.monto ?? 0), 0)
+              const pagado = pagosList
+                .filter((p: any) => String(p.estado ?? '').toLowerCase() === 'pagado')
+                .reduce((acc: number, p: any) => acc + Number(p.monto ?? 0), 0)
+              const pendiente = pagosList
+                .filter((p: any) => String(p.estado ?? '').toLowerCase() === 'pendiente')
+                .reduce((acc: number, p: any) => acc + Number(p.monto ?? 0), 0)
 
-              <div className="divide-y divide-[var(--table-border)]">
-                {solicitudesRecientes.map((s: any) => (
-                  <div
-                    key={s.id}
-                    className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
-                  >
-                    <div className="col-span-4 text-sm text-[var(--text-primary)]">
-                      {s.created_at ? String(s.created_at).slice(0, 10) : '-'}
+              const pctPagado = total > 0 ? Math.min(100, Math.round((pagado / total) * 100)) : 0
+              const pctPendiente = total > 0 ? Math.min(100, Math.round((pendiente / total) * 100)) : 0
+
+              return (
+                <div className="space-y-4">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+                      <span>Pagado</span>
+                      <span className="text-emerald-400">{formatMonto(pagado)}</span>
                     </div>
-                    <div className="col-span-4">
-                      <span
-                        className="inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold bg-amber-500/10 text-amber-400"
-                      >
-                        {s.estado ?? 'Sin estado'}
-                      </span>
-                    </div>
-                    <div className="col-span-4 text-sm text-[var(--text-primary)]">
-                      {s.id}
+                    <div className="mt-2 w-full">
+                      <div className="h-2 rounded-full bg-[var(--table-header-bg)] border border-[var(--table-border)]" />
+                      <div
+                        className="h-2 rounded-full bg-emerald-500 -mt-2"
+                        style={{ width: `${pctPagado}%` }}
+                      />
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
+
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-[var(--text-secondary)]">
+                      <span>Pendiente</span>
+                      <span className="text-amber-400">{formatMonto(pendiente)}</span>
+                    </div>
+                    <div className="mt-2 w-full">
+                      <div className="h-2 rounded-full bg-[var(--table-header-bg)] border border-[var(--table-border)]" />
+                      <div
+                        className="h-2 rounded-full bg-amber-500 -mt-2"
+                        style={{ width: `${pctPendiente}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              )
+            })()
           )}
         </section>
       </div>
     </div>
   )
 }
-
 

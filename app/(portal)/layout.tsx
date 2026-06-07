@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import { PortalShell } from '@/components/portal/PortalShell'
+import PortalShell from '@/components/portal/PortalShell'
 
 export default async function PortalLayout({
   children,

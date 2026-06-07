@@ -39,10 +39,10 @@ export default async function MisSolicitudesPage() {
   if (error) {
     return (
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-white">
+        <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
           Mis Solicitudes
         </h1>
-        <p className="text-sm text-gray-400">
+        <p className="text-sm text-[var(--text-secondary)]">
           No tienes solicitudes registradas.
         </p>
       </div>
@@ -53,7 +53,7 @@ export default async function MisSolicitudesPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-2xl font-semibold text-white">
+      <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>
         Mis Solicitudes
       </h1>
 
