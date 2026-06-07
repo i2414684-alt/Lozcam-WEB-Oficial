@@ -1,4 +1,6 @@
+import Link from 'next/link'
 import { createClient } from '@/lib/supabase/server'
+
 
 function EstadoBadge({ estado }: { estado: string | null }) {
   const text = estado ?? ''
@@ -74,29 +76,35 @@ export default async function MisObrasPage() {
 
         <div className="divide-y divide-[var(--table-border)]">
           {obras.map((o) => (
-            <div
+            <Link
               key={o.id}
-              className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
+              href={`/portal/obras/${o.id}`}
+              className="block"
             >
-              <div className="col-span-1 text-sm text-[var(--text-primary)]">
-                {o.codigo}
+              <div
+                className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors cursor-pointer"
+              >
+                <div className="col-span-1 text-sm text-[var(--text-primary)]">
+                  {o.codigo}
+                </div>
+                <div className="col-span-3 text-sm text-[var(--text-primary)]">
+                  {o.nombre}
+                </div>
+                <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                  {o.tipo_servicio}
+                </div>
+                <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                  {o.distrito}
+                </div>
+                <div className="col-span-2">
+                  <EstadoBadge estado={o.estado as string | null} />
+                </div>
+                <div className="col-span-2 text-right text-sm text-[var(--text-primary)] flex items-center justify-end gap-2">
+                  {formatMonto(o.monto_contrato as number | null)}
+                  <span aria-hidden className="text-[var(--text-secondary)]">›</span>
+                </div>
               </div>
-              <div className="col-span-3 text-sm text-[var(--text-primary)]">
-                {o.nombre}
-              </div>
-              <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                {o.tipo_servicio}
-              </div>
-              <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                {o.distrito}
-              </div>
-              <div className="col-span-2">
-                <EstadoBadge estado={o.estado as string | null} />
-              </div>
-              <div className="col-span-2 text-right text-sm text-[var(--text-primary)]">
-                {formatMonto(o.monto_contrato as number | null)}
-              </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
