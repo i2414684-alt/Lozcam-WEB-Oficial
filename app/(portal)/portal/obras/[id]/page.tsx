@@ -10,7 +10,7 @@ import {
   Building2,
   Layers,
 } from 'lucide-react'
-import { labelEstadoObra, labelEstadoFase, labelTipoServicio } from '@/lib/labels'
+import { labelEstadoObra, labelEstadoFase, labelTipoServicio, limpiarDemo } from '@/lib/labels'
 
 
 type Props = {
@@ -501,7 +501,7 @@ export default async function ObraDetallePage({ params }: Props) {
                           Último reporte
                         </div>
                         <div className="text-sm font-medium text-[var(--text-primary)] mt-1">
-                          {ultimoAvance.descripcion ?? '—'}
+                          {limpiarDemo(ultimoAvance.descripcion) || '—'}
                         </div>
                         <div className="text-xs text-[var(--text-secondary)] mt-2">
                           {formatFecha((ultimoAvance as any).fecha)}

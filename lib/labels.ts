@@ -104,3 +104,7 @@ export function labelMetodoPago(v: unknown): string {
   return labelFromMap(METODOS_PAGO, v)
 }
 
+export function limpiarDemo(texto: string | null | undefined): string {
+  if (!texto) return ''
+  return texto.replace(/^\[DEMO\]\s*/i, '').trim()
+}
