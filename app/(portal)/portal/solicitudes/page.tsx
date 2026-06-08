@@ -71,48 +71,75 @@ export default async function MisSolicitudesPage() {
           </p>
         </div>
       ) : (
-        <div
-          className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"
-        >
+        <>
+          {/* Tabla escritorio */}
           <div
-            className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]"
+            className="hidden md:block rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"
           >
-            <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
-              <div className="col-span-2">Fecha</div>
-              <div className="col-span-4">Título</div>
-              <div className="col-span-2">Tipo</div>
-              <div className="col-span-2">Estado</div>
-              <div className="col-span-2">Prioridad</div>
+            <div
+              className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]"
+            >
+              <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
+                <div className="col-span-2">Fecha</div>
+                <div className="col-span-4">Título</div>
+                <div className="col-span-2">Tipo</div>
+                <div className="col-span-2">Estado</div>
+                <div className="col-span-2">Prioridad</div>
+              </div>
+            </div>
+
+            <div className="divide-y divide-[var(--table-border)]">
+              {list.map((s: any) => (
+                <div
+                  key={s.id}
+                  className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
+                >
+                  <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                    {s.created_at ? String(s.created_at).slice(0, 10) : '-'}
+                  </div>
+                  <div className="col-span-4 text-sm text-[var(--text-primary)]">
+                    {s.titulo}
+                  </div>
+                  <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                    {labelTipoServicio(s.tipo_servicio)}
+                  </div>
+                  <div className="col-span-2">
+                    <EstadoBadge estado={labelEstadoSolicitud(s.estado)} />
+                  </div>
+                  <div className="col-span-2">
+                    <EstadoBadge estado={labelPrioridad(s.prioridad)} />
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="divide-y divide-[var(--table-border)]">
+          {/* Cards móvil */}
+          <div className="md:hidden space-y-3">
             {list.map((s: any) => (
               <div
                 key={s.id}
-                className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
+                className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4"
               >
-                <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {s.created_at ? String(s.created_at).slice(0, 10) : '-'}
-                </div>
-                <div className="col-span-4 text-sm text-[var(--text-primary)]">
-                  {s.titulo}
-                </div>
-                <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {labelTipoServicio(s.tipo_servicio)}
-                </div>
-                <div className="col-span-2">
-                  <EstadoBadge estado={labelEstadoSolicitud(s.estado)} />
-                </div>
-                <div className="col-span-2">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-[var(--text-primary)]">
+                      {s.titulo}
+                    </div>
+                    <div className="text-xs text-[var(--text-secondary)] mt-0.5">
+                      {s.created_at ? String(s.created_at).slice(0, 10) : '-'} · {labelTipoServicio(s.tipo_servicio)}
+                    </div>
+                  </div>
                   <EstadoBadge estado={labelPrioridad(s.prioridad)} />
+                </div>
+                <div className="mt-3 pt-3 border-t border-[var(--table-border)]">
+                  <EstadoBadge estado={labelEstadoSolicitud(s.estado)} />
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </>
       )}
     </div>
   )
 }
-

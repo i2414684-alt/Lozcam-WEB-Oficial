@@ -4,15 +4,19 @@ import { useTheme } from '@/contexts/ThemeContext'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { Sun, Moon, Monitor, LogOut, ChevronDown } from 'lucide-react'
+import { Sun, Moon, Monitor, LogOut, ChevronDown, Menu } from 'lucide-react'
+
 
 type Tema = 'claro' | 'oscuro' | 'automatico'
 
 export default function PortalNavbar({
   profile,
+  onOpenSidebarMovil,
 }: {
   profile: any
+  onOpenSidebarMovil?: () => void
 }) {
+
   const router = useRouter()
   const supabase = createClient()
   const { tema, setTema, isDark } = useTheme() as {
@@ -74,14 +78,24 @@ export default function PortalNavbar({
     <header
       className={`${navBg} ${border} border-b px-6 py-3 flex items-center justify-between gap-4 transition-colors`}
     >
-      <div>
-        <div className={`text-base font-medium ${textLeft}`}>
-          Bienvenido, {nombre}
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          className={`md:hidden p-1.5 rounded-lg transition-colors ${btnBg}`}
+          onClick={() => onOpenSidebarMovil?.()}
+          aria-label="Abrir menú"
+        >
+          <Menu size={18} />
+        </button>
+
+        <div>
+          <div className={`text-base font-medium ${textLeft}`}>Bienvenido, {nombre}</div>
+          <div className={`text-xs ${textMuted}`}>Resumen general de tu cuenta</div>
         </div>
-        <div className={`text-xs ${textMuted}`}>Resumen general de tu cuenta</div>
       </div>
 
       <div className="flex items-center gap-3 shrink-0">
+
         <div className="relative" ref={temaRef}>
           <button
             onClick={() => setTemaMenuAbierto(!temaMenuAbierto)}

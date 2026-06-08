@@ -1,7 +1,8 @@
-# TODO - lozcam-web-oficial
+# TODO
 
-- [x] PASO presupuestos/page.tsx: Verificar import FilaTabla y corregir archivo para incluirlo.
-- [x] PASO pagos/page.tsx: Reemplazo completo solicitado (previo intento parcial). 
-- [ ] PASO pagos/page.tsx: Ejecutar `cat ... | head -6`.
-- [ ] PASO pagos/page.tsx: Verificar en runtime (npm run dev /pagos) que no hay error, KPI y tabla cargan y hover funciona.
+- [ ] Editar `components/portal/PortalShell.tsx`: agregar estado de drawer móvil, overlay y layout responsive (desktop igual, móvil drawer).
+- [ ] Editar `components/portal/PortalSidebar.tsx`: aceptar `onNavigate?: () => void` y llamar al click en cada `Link`.
+- [ ] Editar `components/portal/PortalNavbar.tsx`: agregar botón hamburguesa `md:hidden` y prop `onOpenSidebarMovil`.
+- [ ] Correr `npm run build` para verificar build verde.
+- [ ] Ejecutar `git status` y confirmar archivos modificados.
 

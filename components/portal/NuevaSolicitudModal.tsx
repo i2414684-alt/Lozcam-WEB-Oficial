@@ -52,21 +52,21 @@ export default function NuevaSolicitudModal() {
 
       {abierto ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto p-4"
           role="dialog"
           aria-modal="true"
         >
           <div
-            className="absolute inset-0"
+            className="fixed inset-0"
             style={{ background: 'rgba(0,0,0,0.6)' }}
             onClick={() => {
               if (!pending) setAbierto(false)
             }}
           />
 
-          <div className="relative w-full max-w-2xl p-4">
+          <div className="relative w-full max-w-2xl my-auto">
             <div
-              className="w-full max-w-2xl rounded-xl border border-[var(--card-border)] shadow-lg overflow-hidden"
+              className="w-full max-w-2xl rounded-xl border border-[var(--card-border)] shadow-lg overflow-hidden max-h-[90vh] overflow-y-auto"
               style={{
                 backgroundColor: isDark ? '#0f2238' : '#ffffff',
                 color: 'inherit',

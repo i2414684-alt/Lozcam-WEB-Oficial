@@ -57,9 +57,9 @@ export default async function MisObrasPage() {
     <div className="space-y-4">
       <h1 className="text-2xl font-semibold" style={{ color: 'var(--text-primary)' }}>Mis Obras</h1>
 
-
+      {/* Tabla escritorio */}
       <div
-        className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"
+        className="hidden md:block rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"
       >
         <div
           className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]"
@@ -108,7 +108,36 @@ export default async function MisObrasPage() {
           ))}
         </div>
       </div>
+
+      {/* Cards móvil */}
+      <div className="md:hidden space-y-3">
+        {obras.map((o) => (
+          <Link key={o.id} href={`/portal/obras/${o.id}`} className="block">
+            <div className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4 hover:bg-[var(--table-row-hover)] transition-colors">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold text-[var(--text-primary)]">
+                    {o.nombre}
+                  </div>
+                  <div className="text-xs text-[var(--text-secondary)] mt-0.5">
+                    {o.codigo} · {labelTipoServicio(o.tipo_servicio)}
+                  </div>
+                  <div className="text-xs text-[var(--text-secondary)]">
+                    {o.distrito}
+                  </div>
+                </div>
+                <EstadoBadge estado={labelEstadoObra(o.estado as string | null)} />
+              </div>
+              <div className="mt-3 pt-3 border-t border-[var(--table-border)] flex items-center justify-between">
+                <span className="text-base font-semibold text-[var(--text-primary)]">
+                  {formatMonto(o.monto_contrato as number | null)}
+                </span>
+                <span aria-hidden className="text-[var(--text-secondary)]">›</span>
+              </div>
+            </div>
+          </Link>
+        ))}
+      </div>
     </div>
   )
 }
-

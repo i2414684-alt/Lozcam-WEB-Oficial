@@ -96,19 +96,19 @@ export default function ComprobanteModal({
 
       {abierto ? (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex item-start items-center justify-center overflow-y-auto p-4"
           role="dialog"
           aria-modal="true"
         >
           <div
-            className="absolute inset-0"
+            className="fixed inset-0"
             style={{ background: 'rgba(0,0,0,0.6)' }}
             onClick={() => setAbierto(false)}
           />
 
-          <div className="relative w-full max-w-2xl p-4">
+          <div className="relative w-full max-w-2xl my_auto">
             <div
-              className="w-full rounded-xl border border-[var(--card-border)] shadow-lg overflow-hidden"
+              className="w-full max-w-2xl rounded-xl border border-[var(--card-border)] shadow-lg overflow-hidden max-h-[90vh] overflow-y-auto"
               style={{
                 backgroundColor: isDark ? '#0f2238' : '#ffffff',
                 color: 'inherit',
@@ -148,7 +148,7 @@ export default function ComprobanteModal({
                 </div>
 
                 <div className="mt-5 rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] p-4 space-y-3">
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <div className="col-span-1">
                       <div className="text-xs font-semibold text-[var(--text-secondary)] uppercase tracking-wider">
                         Monto base

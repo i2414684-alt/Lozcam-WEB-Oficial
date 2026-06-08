@@ -64,7 +64,6 @@ export default async function MisPagosPage() {
   }
 
   const formatMonto = (monto: number | null) =>
-
     new Intl.NumberFormat('es-PE', {
       style: 'currency',
       currency: 'PEN',
@@ -106,60 +105,95 @@ export default async function MisPagosPage() {
           <p className="text-sm text-gray-400">No tienes pagos registrados.</p>
         </div>
       ) : (
-        <div
-          className="rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"
-        >
+        <>
+          {/* Tabla escritorio */}
           <div
-            className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]"
+            className="hidden md:block rounded-xl border border-[var(--table-border)] bg-[var(--card-bg)] overflow-hidden"
           >
-            <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
-              <div className="col-span-2">Fecha</div>
-              <div className="col-span-2">Concepto</div>
-              <div className="col-span-2">Obra</div>
-              <div className="col-span-2">Método</div>
-              <div className="col-span-1">Estado</div>
-              <div className="col-span-2 text-right">Monto</div>
-              <div className="col-span-1 text-center">Doc.</div>
+            <div
+              className="bg-[var(--table-header-bg)] text-[var(--table-header-text)] border-b border-[var(--table-border)]"
+            >
+              <div className="grid grid-cols-12 gap-3 px-4 py-3 text-xs font-semibold">
+                <div className="col-span-2">Fecha</div>
+                <div className="col-span-2">Concepto</div>
+                <div className="col-span-2">Obra</div>
+                <div className="col-span-2">Método</div>
+                <div className="col-span-1">Estado</div>
+                <div className="col-span-2 text-right">Monto</div>
+                <div className="col-span-1 text-center">Doc.</div>
+              </div>
+            </div>
+
+            <div className="divide-y divide-[var(--table-border)]">
+              {list.map((p: any) => (
+                <div
+                  key={p.id}
+                  className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
+                >
+                  <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                    {p.fecha_pago ? String(p.fecha_pago).slice(0, 10) : '-'}
+                  </div>
+                  <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                    {p.concepto}
+                  </div>
+                  <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                    {p.obra?.nombre ?? '-'}
+                  </div>
+                  <div className="col-span-2 text-sm text-[var(--text-primary)]">
+                    {labelMetodoPago(p.metodo_pago)}
+                  </div>
+                  <div className="col-span-1">
+                    <EstadoBadge estado={labelEstadoPago(p.estado as string | null)} />
+                  </div>
+                  <div className="col-span-2 text-right text-sm text-[var(--text-primary)]">
+                    {formatMonto(p.monto ?? 0)}
+                  </div>
+                  <div className="col-span-1 flex justify-center">
+                    {comprobantesByPagoId.has(String(p.id)) ? (
+                      <ComprobanteModal comprobante={comprobantesByPagoId.get(String(p.id)) ?? null} />
+                    ) : (
+                      <span className="text-sm text-[var(--text-secondary)]">—</span>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="divide-y divide-[var(--table-border)]">
+          {/* Cards móvil */}
+          <div className="md:hidden space-y-3">
             {list.map((p: any) => (
               <div
                 key={p.id}
-                className="grid grid-cols-12 gap-3 px-4 py-3 hover:bg-[var(--table-row-hover)] transition-colors"
+                className="rounded-xl border border-[var(--card-border)] bg-[var(--card-bg)] p-4"
               >
-                <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {p.fecha_pago ? String(p.fecha_pago).slice(0, 10) : '-'}
-                </div>
-                <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {p.concepto}
-                </div>
-                <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {p.obra?.nombre ?? '-'}
-                </div>
-                <div className="col-span-2 text-sm text-[var(--text-primary)]">
-                  {labelMetodoPago(p.metodo_pago)}
-                </div>
-                <div className="col-span-1">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <div className="text-sm font-semibold text-[var(--text-primary)]">
+                      {p.concepto}
+                    </div>
+                    <div className="text-xs text-[var(--text-secondary)] mt-0.5">
+                      {p.fecha_pago ? String(p.fecha_pago).slice(0, 10) : '-'} · {labelMetodoPago(p.metodo_pago)}
+                    </div>
+                    <div className="text-xs text-[var(--text-secondary)]">
+                      {p.obra?.nombre ?? '-'}
+                    </div>
+                  </div>
                   <EstadoBadge estado={labelEstadoPago(p.estado as string | null)} />
                 </div>
-                <div className="col-span-2 text-right text-sm text-[var(--text-primary)]">
-                  {formatMonto(p.monto ?? 0)}
-                </div>
-                <div className="col-span-1 flex justify-center">
-                  {comprobantesByPagoId.has(String(p.id)) ? (
+                <div className="mt-3 pt-3 border-t border-[var(--table-border)] flex items-center justify-between">
+                  <span className="text-lg font-semibold text-[var(--text-primary)]">
+                    {formatMonto(p.monto ?? 0)}
+                  </span>
+                  {comprobantesByPagoId.has(String(p.id)) && (
                     <ComprobanteModal comprobante={comprobantesByPagoId.get(String(p.id)) ?? null} />
-                  ) : (
-                    <span className="text-sm text-[var(--text-secondary)]">—</span>
                   )}
                 </div>
               </div>
             ))}
           </div>
-        </div>
+        </>
       )}
     </div>
   )
 }
-
