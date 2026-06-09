@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
-  const rutasPublicas = ['/', '/landing', '/login']
+  const rutasPublicas = ['/', '/landing', '/login', '/recuperar', '/reset-password']
   const esPublica = rutasPublicas.some(r =>
     pathname === r || pathname.startsWith(r + '/')
   )
