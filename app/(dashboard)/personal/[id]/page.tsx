@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { formatFecha } from '@/lib/utils/formatters'
 
 const ROL_LABEL: Record<string, string> = {
   gerente_general:     'Gerente General',
@@ -43,15 +44,25 @@ export default async function PersonalDetallePage({
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
 
+  const mostrar = (v: any) =>
+    v === null || v === undefined || v === '' ? '—' : String(v)
+
+  const especialidadesText =
+    Array.isArray(perfil.especialidades) && perfil.especialidades.length > 0
+      ? null
+      : '—'
+
   return (
     <div className="max-w-2xl mx-auto">
+
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={tp}>
-            {perfil.nombre} {perfil.apellidos}
+            {mostrar(perfil.nombre)} {perfil.apellidos ?? ''}
           </h1>
           <p className="text-sm mt-0.5" style={ts}>
-            {ROL_LABEL[perfil.rol] ?? perfil.rol}
+            {ROL_LABEL[perfil.rol] ?? mostrar(perfil.rol)}
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -67,39 +78,81 @@ export default async function PersonalDetallePage({
         </div>
       </div>
 
-      <div className="rounded-xl p-6 space-y-4 mb-4" style={cardStyle}>
+      {/* Datos personales */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-3" style={tp}>Datos personales</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-xs mb-1" style={ts}>DNI</p>
-            <p className="text-sm font-medium" style={tp}>{perfil.dni ?? '—'}</p>
+            <p className="text-xs mb-0.5" style={ts}>Nombre</p>
+            <p className="text-sm font-medium" style={tp}>{mostrar(perfil.nombre)}</p>
           </div>
           <div>
-            <p className="text-xs mb-1" style={ts}>Teléfono</p>
-            <p className="text-sm font-medium" style={tp}>{perfil.telefono ?? '—'}</p>
+            <p className="text-xs mb-0.5" style={ts}>Apellidos</p>
+            <p className="text-sm font-medium" style={tp}>{mostrar(perfil.apellidos)}</p>
           </div>
           <div>
-            <p className="text-xs mb-1" style={ts}>Email personal</p>
-            <p className="text-sm font-medium" style={tp}>{perfil.email_personal ?? '—'}</p>
+            <p className="text-xs mb-0.5" style={ts}>DNI</p>
+            <p className="text-sm font-mono" style={tp}>{mostrar(perfil.dni)}</p>
           </div>
           <div>
-            <p className="text-xs mb-1" style={ts}>Fecha ingreso</p>
-            <p className="text-sm font-medium" style={tp}>{perfil.fecha_ingreso ?? '—'}</p>
+            <p className="text-xs mb-0.5" style={ts}>Teléfono</p>
+            <p className="text-sm" style={tp}>{mostrar(perfil.telefono)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Teléfono alternativo</p>
+            <p className="text-sm" style={tp}>{mostrar(perfil.telefono_alt)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Email personal</p>
+            <p className="text-sm" style={tp}>{mostrar(perfil.email_personal)}</p>
           </div>
         </div>
-        {perfil.especialidades && perfil.especialidades.length > 0 && (
+      </div>
+
+      {/* Información laboral */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-3" style={tp}>Información laboral</h2>
+        <div className="grid grid-cols-2 gap-4 mb-4">
           <div>
-            <p className="text-xs mb-2" style={ts}>Especialidades</p>
+            <p className="text-xs mb-0.5" style={ts}>Rol</p>
+            <p className="text-sm" style={tp}>{ROL_LABEL[perfil.rol] ?? mostrar(perfil.rol)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Estado</p>
+            <span
+              className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                perfil.activo
+                  ? 'bg-green-100 text-green-700'
+                  : 'bg-gray-100 text-gray-600'
+              }`}
+            >
+              {perfil.activo ? 'Activo' : 'Inactivo'}
+            </span>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Fecha de ingreso</p>
+            <p className="text-sm" style={tp}>
+              {perfil.fecha_ingreso ? formatFecha(perfil.fecha_ingreso) : '—'}
+            </p>
+          </div>
+        </div>
+        <div>
+          <p className="text-xs mb-2" style={ts}>Especialidades</p>
+          {especialidadesText ? (
+            <p className="text-sm" style={tp}>—</p>
+          ) : (
             <div className="flex flex-wrap gap-2">
-              {perfil.especialidades.map((esp: string) => (
+              {(perfil.especialidades as string[]).map((esp) => (
                 <span key={esp} className="text-xs px-2 py-1 bg-amber-500/10 text-amber-500 rounded-full">
                   {esp}
                 </span>
               ))}
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
 
+      {/* Obras asignadas */}
       <div className="rounded-xl p-5" style={cardStyle}>
         <h2 className="text-sm font-semibold mb-4" style={tp}>
           Obras asignadas ({asignaciones?.length ?? 0})
@@ -133,6 +186,7 @@ export default async function PersonalDetallePage({
           </div>
         )}
       </div>
+
     </div>
   )
 }
