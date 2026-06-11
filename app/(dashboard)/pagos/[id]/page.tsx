@@ -32,7 +32,9 @@ export default async function PagoDetallePage({
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
-  const dividerStyle = { borderColor: 'var(--card-border)' }
+
+  const mostrar = (v: any) =>
+    v === null || v === undefined || v === '' ? '—' : String(v)
 
   const cliente = (pago.obras as any)?.clientes
   const nombreCliente = cliente?.razon_social
@@ -40,6 +42,8 @@ export default async function PagoDetallePage({
 
   return (
     <div className="max-w-2xl mx-auto">
+
+      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
@@ -66,73 +70,98 @@ export default async function PagoDetallePage({
         </div>
       </div>
 
+      {/* KPI cards */}
       <div className="grid grid-cols-3 gap-4 mb-4">
         <div className="rounded-xl p-4" style={cardStyle}>
           <p className="text-xs mb-1" style={ts}>Monto</p>
           <p className="text-xl font-bold" style={tp}>{formatPEN(Number(pago.monto))}</p>
-          <p className="text-xs mt-0.5" style={ts}>{pago.moneda}</p>
+          <p className="text-xs mt-0.5" style={ts}>{mostrar(pago.moneda)}</p>
         </div>
         <div className="rounded-xl p-4" style={cardStyle}>
           <p className="text-xs mb-1" style={ts}>Fecha de pago</p>
-          <p className="text-sm font-semibold" style={tp}>{formatFecha(pago.fecha_pago)}</p>
+          <p className="text-sm font-semibold" style={tp}>
+            {pago.fecha_pago ? formatFecha(pago.fecha_pago) : '—'}
+          </p>
         </div>
         <div className="rounded-xl p-4" style={cardStyle}>
-          <p className="text-xs mb-1" style={ts}>Método</p>
+          <p className="text-xs mb-1" style={ts}>Método de pago</p>
           <p className="text-sm font-semibold" style={tp}>
-            {METODO_PAGO_LABEL[pago.metodo_pago] ?? pago.metodo_pago}
+            {METODO_PAGO_LABEL[pago.metodo_pago] ?? mostrar(pago.metodo_pago)}
           </p>
         </div>
       </div>
 
-      <div className="rounded-xl p-6 space-y-4" style={cardStyle}>
-        <div className="grid grid-cols-2 gap-4">
+      {/* Obra + Cliente */}
+      <div className="grid grid-cols-2 gap-4 mb-4">
+        <div className="rounded-xl p-5" style={cardStyle}>
+          <h2 className="text-sm font-semibold mb-3" style={tp}>Obra</h2>
           <div>
-            <p className="text-xs mb-1" style={ts}>Obra</p>
-            <p className="text-sm font-medium" style={tp}>{(pago.obras as any)?.nombre ?? '—'}</p>
+            <p className="text-xs mb-0.5" style={ts}>Nombre</p>
+            <p className="text-sm font-medium" style={tp}>{mostrar((pago.obras as any)?.nombre)}</p>
           </div>
-          <div>
-            <p className="text-xs mb-1" style={ts}>Cliente</p>
-            <p className="text-sm font-medium" style={tp}>{nombreCliente ?? '—'}</p>
-          </div>
-          {pago.numero_cuota && (
-            <div>
-              <p className="text-xs mb-1" style={ts}>Número de cuota</p>
-              <p className="text-sm font-medium" style={tp}>#{pago.numero_cuota}</p>
-            </div>
-          )}
-          {pago.numero_operacion && (
-            <div>
-              <p className="text-xs mb-1" style={ts}>N° operación</p>
-              <p className="text-sm font-medium font-mono" style={tp}>{pago.numero_operacion}</p>
-            </div>
-          )}
         </div>
-
-        {pago.archivo_voucher && (
-          <div className="pt-4 border-t" style={dividerStyle}>
-            <p className="text-xs mb-2" style={ts}>Voucher adjunto</p>
-            <a
-              href={pago.archivo_voucher}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-sm text-amber-500 hover:text-amber-400 font-medium"
-            >
-              Ver comprobante →
-            </a>
+        <div className="rounded-xl p-5" style={cardStyle}>
+          <h2 className="text-sm font-semibold mb-3" style={tp}>Cliente</h2>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Nombre</p>
+            <p className="text-sm font-medium" style={tp}>{mostrar(nombreCliente)}</p>
           </div>
-        )}
-
-        {pago.notas && (
-          <div className="pt-4 border-t" style={dividerStyle}>
-            <p className="text-xs mb-1" style={ts}>Notas</p>
-            <p className="text-sm" style={ts}>{pago.notas}</p>
-          </div>
-        )}
-
-        <div className="pt-4 border-t" style={dividerStyle}>
-          <p className="text-xs" style={ts}>Registrado el {formatFecha(pago.created_at)}</p>
         </div>
       </div>
+
+      {/* Detalles del pago */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-3" style={tp}>Detalles del pago</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Concepto</p>
+            <p className="text-sm" style={tp}>{mostrar(pago.concepto)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Número de cuota</p>
+            <p className="text-sm" style={tp}>
+              {pago.numero_cuota ? `#${pago.numero_cuota}` : '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>N° operación</p>
+            <p className="text-sm font-mono" style={tp}>{mostrar(pago.numero_operacion)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Moneda</p>
+            <p className="text-sm" style={tp}>{mostrar(pago.moneda)}</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Voucher */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-2" style={tp}>Voucher adjunto</h2>
+        {pago.archivo_voucher ? (
+          <a
+            href={pago.archivo_voucher}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-sm text-amber-500 hover:text-amber-400 font-medium"
+          >
+            Ver comprobante →
+          </a>
+        ) : (
+          <p className="text-sm" style={ts}>—</p>
+        )}
+      </div>
+
+      {/* Notas */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-2" style={tp}>Notas</h2>
+        <p className="text-sm" style={ts}>{mostrar(pago.notas)}</p>
+      </div>
+
+      {/* Footer: fecha registro */}
+      <div className="rounded-xl px-5 py-4" style={cardStyle}>
+        <p className="text-xs" style={ts}>Registrado el {formatFecha(pago.created_at)}</p>
+      </div>
+
     </div>
   )
 }
