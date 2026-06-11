@@ -53,9 +53,17 @@ export default async function PagoDetallePage({
             {pago.numero_cuota ? ` · Cuota #${pago.numero_cuota}` : ''}
           </p>
         </div>
-        <Link href="/pagos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
-          ← Volver
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/pagos/${id}/editar`}
+            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            Editar
+          </Link>
+          <Link href="/pagos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
+            ← Volver
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-3 gap-4 mb-4">

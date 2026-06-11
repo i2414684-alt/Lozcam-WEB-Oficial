@@ -55,9 +55,17 @@ export default async function SolicitudDetallePage({
             {TIPO_SERVICIO_LABEL[sol.tipo_servicio]} · {formatFecha(sol.created_at)}
           </p>
         </div>
-        <Link href="/solicitudes" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
-          ← Volver
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/solicitudes/${id}/editar`}
+            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            Editar
+          </Link>
+          <Link href="/solicitudes" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
+            ← Volver
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-2 gap-4 mb-4">
