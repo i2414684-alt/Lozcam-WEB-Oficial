@@ -5,6 +5,7 @@ import { ESTADO_OBRA_COLOR, ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib
 
 export default async function ObrasPage() {
   const obras = await getObras()
+  const ts = { color: 'var(--text-secondary)' }
 
   return (
     <div>
@@ -29,7 +30,7 @@ export default async function ObrasPage() {
           className="rounded-xl p-12 text-center"
           style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)' }}
         >
-          <p className="text-gray-400 text-sm">No hay obras registradas aún</p>
+          <p className="text-sm" style={ts}>No hay obras registradas aún</p>
           <Link
             href="/obras/nueva"
             className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
@@ -51,7 +52,7 @@ export default async function ObrasPage() {
                   <div className="flex items-center gap-3 mb-1">
                     <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>{obra.nombre}</h3>
                     {obra.codigo && (
-                      <span className="text-xs text-gray-400 font-mono">{obra.codigo}</span>
+                      <span className="text-xs font-mono" style={ts}>{obra.codigo}</span>
                     )}
                     <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_OBRA_COLOR[obra.estado]}`}>
                       {ESTADO_OBRA_LABEL[obra.estado]}
@@ -61,7 +62,7 @@ export default async function ObrasPage() {
                     {TIPO_SERVICIO_LABEL[obra.tipo_servicio]} · {obra.direccion}
                     {obra.distrito && `, ${obra.distrito}`}
                   </p>
-                  <div className="flex items-center gap-6 text-xs text-gray-400">
+                  <div className="flex items-center gap-6 text-xs" style={ts}>
                     {obra.clientes && (
                       <span>
                         Cliente:{' '}
@@ -79,7 +80,7 @@ export default async function ObrasPage() {
                 </div>
                 <div className="text-right ml-4">
                   <p className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{formatPEN(obra.monto_contrato)}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">monto contrato</p>
+                  <p className="text-xs mt-0.5" style={ts}>monto contrato</p>
                 </div>
               </div>
             </Link>
