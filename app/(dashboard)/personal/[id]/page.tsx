@@ -54,9 +54,17 @@ export default async function PersonalDetallePage({
             {ROL_LABEL[perfil.rol] ?? perfil.rol}
           </p>
         </div>
-        <Link href="/personal" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
-          ← Volver
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/personal/${id}/editar`}
+            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            Editar
+          </Link>
+          <Link href="/personal" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
+            ← Volver
+          </Link>
+        </div>
       </div>
 
       <div className="rounded-xl p-6 space-y-4 mb-4" style={cardStyle}>

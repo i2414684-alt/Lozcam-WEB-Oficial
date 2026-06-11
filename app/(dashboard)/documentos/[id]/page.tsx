@@ -52,9 +52,17 @@ export default async function DocumentoDetallePage({
             {TIPO_DOCUMENTO_LABEL[doc.tipo]} · v{doc.version_actual}
           </p>
         </div>
-        <Link href="/documentos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
-          ← Volver
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/documentos/${id}/editar`}
+            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            Editar
+          </Link>
+          <Link href="/documentos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
+            ← Volver
+          </Link>
+        </div>
       </div>
 
       <div className="rounded-xl p-6 mb-4" style={cardStyle}>
