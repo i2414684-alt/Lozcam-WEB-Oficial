@@ -37,9 +37,19 @@ export default async function SolicitudDetallePage({
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
+  const mostrar = (v: any) =>
+    v === null || v === undefined || v === '' ? '—' : String(v)
+
+  const nombreCliente =
+    sol.clientes?.razon_social ??
+    (sol.clientes
+      ? `${sol.clientes.nombres ?? ''} ${sol.clientes.apellidos ?? ''}`.trim() || null
+      : null)
 
   return (
     <div className="max-w-3xl mx-auto">
+
+      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
@@ -68,52 +78,128 @@ export default async function SolicitudDetallePage({
         </div>
       </div>
 
+      {/* Cliente + Ubicación */}
       <div className="grid grid-cols-2 gap-4 mb-4">
+
+        {/* Cliente */}
         <div className="rounded-xl p-5" style={cardStyle}>
           <h2 className="text-sm font-semibold mb-3" style={tp}>Cliente</h2>
-          <p className="text-sm font-medium" style={tp}>
-            {sol.clientes?.razon_social ?? `${sol.clientes?.nombres} ${sol.clientes?.apellidos}`}
-          </p>
-          {sol.clientes?.telefono && <p className="text-xs mt-1" style={ts}>{sol.clientes.telefono}</p>}
-          {sol.clientes?.email && <p className="text-xs" style={ts}>{sol.clientes.email}</p>}
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs mb-0.5" style={ts}>Nombre</p>
+              <p className="text-sm font-medium" style={tp}>{mostrar(nombreCliente)}</p>
+            </div>
+            <div>
+              <p className="text-xs mb-0.5" style={ts}>Teléfono</p>
+              <p className="text-sm" style={tp}>{mostrar(sol.clientes?.telefono)}</p>
+            </div>
+            <div>
+              <p className="text-xs mb-0.5" style={ts}>Email</p>
+              <p className="text-sm" style={tp}>{mostrar(sol.clientes?.email)}</p>
+            </div>
+          </div>
         </div>
 
+        {/* Ubicación */}
         <div className="rounded-xl p-5" style={cardStyle}>
-          <h2 className="text-sm font-semibold mb-3" style={tp}>Datos del proyecto</h2>
-          {sol.direccion_obra && <p className="text-xs mb-1" style={ts}>{sol.direccion_obra}</p>}
-          {sol.distrito && (
-            <p className="text-xs" style={ts}>
-              {sol.distrito}{sol.provincia ? `, ${sol.provincia}` : ''}
+          <h2 className="text-sm font-semibold mb-3" style={tp}>Ubicación del proyecto</h2>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs mb-0.5" style={ts}>Dirección</p>
+              <p className="text-sm" style={tp}>{mostrar(sol.direccion_obra)}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-3">
+              <div>
+                <p className="text-xs mb-0.5" style={ts}>Distrito</p>
+                <p className="text-sm" style={tp}>{mostrar(sol.distrito)}</p>
+              </div>
+              <div>
+                <p className="text-xs mb-0.5" style={ts}>Provincia</p>
+                <p className="text-sm" style={tp}>{mostrar(sol.provincia)}</p>
+              </div>
+              <div>
+                <p className="text-xs mb-0.5" style={ts}>Departamento</p>
+                <p className="text-sm" style={tp}>{mostrar(sol.departamento)}</p>
+              </div>
+              <div>
+                <p className="text-xs mb-0.5" style={ts}>Área (m²)</p>
+                <p className="text-sm" style={tp}>{mostrar(sol.area_m2)}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      {/* Detalles de la solicitud */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-3" style={tp}>Detalles de la solicitud</h2>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Tipo de servicio</p>
+            <p className="text-sm" style={tp}>
+              {TIPO_SERVICIO_LABEL[sol.tipo_servicio] ?? mostrar(sol.tipo_servicio)}
             </p>
-          )}
-          {sol.area_m2 && <p className="text-xs mt-1" style={ts}>Área: {sol.area_m2} m²</p>}
-          {sol.presupuesto_ref && (
-            <p className="text-xs" style={ts}>Presupuesto ref: {formatPEN(sol.presupuesto_ref)}</p>
-          )}
-          <div className="flex gap-3 mt-2">
-            {sol.tiene_planos && (
-              <span className="text-xs bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded">Tiene planos</span>
-            )}
-            {sol.tiene_terreno && (
-              <span className="text-xs bg-green-500/10 text-green-500 px-2 py-0.5 rounded">Tiene terreno</span>
-            )}
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Presupuesto ref.</p>
+            <p className="text-sm" style={tp}>
+              {sol.presupuesto_ref ? formatPEN(sol.presupuesto_ref) : '—'}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Fuente</p>
+            <p className="text-sm" style={tp}>{mostrar(sol.fuente)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Fecha de registro</p>
+            <p className="text-sm" style={tp}>{formatFecha(sol.created_at)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Planos</p>
+            <p className="text-sm" style={tp}>
+              {sol.tiene_planos ? (
+                <span className="text-xs bg-amber-500/10 text-amber-500 px-2 py-0.5 rounded">Tiene planos</span>
+              ) : (
+                '—'
+              )}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Terreno</p>
+            <p className="text-sm" style={tp}>
+              {sol.tiene_terreno ? (
+                <span className="text-xs bg-green-500/10 text-green-500 px-2 py-0.5 rounded">Tiene terreno</span>
+              ) : (
+                '—'
+              )}
+            </p>
           </div>
         </div>
       </div>
 
-      {sol.descripcion && (
-        <div className="rounded-xl p-5 mb-4" style={cardStyle}>
-          <h2 className="text-sm font-semibold mb-2" style={tp}>Descripción</h2>
-          <p className="text-sm" style={ts}>{sol.descripcion}</p>
-        </div>
-      )}
+      {/* Descripción */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-2" style={tp}>Descripción</h2>
+        <p className="text-sm" style={ts}>{mostrar(sol.descripcion)}</p>
+      </div>
 
+      {/* Notas internas */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-2" style={tp}>Notas internas</h2>
+        <p className="text-sm" style={ts}>{mostrar(sol.notas_internas)}</p>
+      </div>
+
+      {/* Citas */}
       <div className="rounded-xl p-5 mb-4" style={cardStyle}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold" style={tp}>
             Citas ({citas?.length ?? 0})
           </h2>
-          <Link href={`/solicitudes/${id}/cita`} className="text-sm text-amber-500 hover:text-amber-400 font-medium">
+          <Link
+            href={`/solicitudes/${id}/cita`}
+            className="text-sm text-amber-500 hover:text-amber-400 font-medium"
+          >
             + Agendar cita
           </Link>
         </div>
@@ -152,6 +238,7 @@ export default async function SolicitudDetallePage({
         )}
       </div>
 
+      {/* Acciones */}
       <div className="rounded-xl p-5" style={cardStyle}>
         <h2 className="text-sm font-semibold mb-4" style={tp}>Acciones</h2>
         <div className="flex gap-3">
@@ -172,6 +259,7 @@ export default async function SolicitudDetallePage({
           )}
         </div>
       </div>
+
     </div>
   )
 }

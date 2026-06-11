@@ -54,9 +54,17 @@ export default async function PresupuestoDetallePage({
             {pres.obras?.nombre} · {formatFecha(pres.created_at)}
           </p>
         </div>
-        <Link href="/presupuestos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
-          ← Volver
-        </Link>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/presupuestos/${id}/editar`}
+            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+          >
+            Editar
+          </Link>
+          <Link href="/presupuestos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
+            ← Volver
+          </Link>
+        </div>
       </div>
 
       <div className="grid grid-cols-4 gap-4 mb-6">
