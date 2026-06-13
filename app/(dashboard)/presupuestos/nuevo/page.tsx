@@ -133,33 +133,54 @@ export default function NuevoPresupuestoPage() {
     }
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
+  const partidaInputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const partidaInputClass = 'w-full rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500'
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Nuevo presupuesto</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Elabora el presupuesto de una obra</p>
+        <h1 className="text-2xl font-bold" style={tp}>Nuevo presupuesto</h1>
+        <p className="text-sm mt-0.5" style={ts}>Elabora el presupuesto de una obra</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-700">Información general</h2>
+
+        {/* Tarjeta 1: Información general */}
+        <div className="rounded-xl p-6 space-y-4" style={cardStyle}>
+          <h2 className="text-sm font-semibold" style={ts}>Información general</h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre *</label>
+              <label className={labelClass} style={ts}>Nombre *</label>
               <input
                 name="nombre"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
                 placeholder="Ej: Presupuesto inicial"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Obra *</label>
+              <label className={labelClass} style={ts}>Obra *</label>
               <select
                 name="obra_id"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               >
                 <option value="">Seleccionar obra</option>
                 {obras.map((o) => (
@@ -172,29 +193,31 @@ export default function NuevoPresupuestoPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+            <label className={labelClass} style={ts}>Descripción</label>
             <textarea
               name="descripcion"
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        {/* Tarjeta 2: Partidas */}
+        <div className="rounded-xl p-6" style={cardStyle}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-gray-700">Partidas ({partidas.length})</h2>
+            <h2 className="text-sm font-semibold" style={ts}>Partidas ({partidas.length})</h2>
             <button
               type="button"
               onClick={agregarPartida}
-              className="text-sm text-blue-600 hover:text-blue-800 font-medium"
+              className="text-sm font-medium text-amber-500 hover:text-amber-400"
             >
               + Agregar partida
             </button>
           </div>
 
           <div className="space-y-3">
-            <div className="grid grid-cols-12 gap-2 text-xs font-medium text-gray-500 px-1">
+            <div className="grid grid-cols-12 gap-2 text-xs font-medium px-1" style={ts}>
               <div className="col-span-1">Código</div>
               <div className="col-span-3">Descripción</div>
               <div className="col-span-1">Unidad</div>
@@ -211,7 +234,8 @@ export default function NuevoPresupuestoPage() {
                   <input
                     value={p.codigo}
                     onChange={(e) => actualizarPartida(i, 'codigo', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={partidaInputClass}
+                    style={partidaInputStyle}
                     placeholder="01.01"
                   />
                 </div>
@@ -220,7 +244,8 @@ export default function NuevoPresupuestoPage() {
                     value={p.descripcion}
                     onChange={(e) => actualizarPartida(i, 'descripcion', e.target.value)}
                     required
-                    className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={partidaInputClass}
+                    style={partidaInputStyle}
                     placeholder="Descripción"
                   />
                 </div>
@@ -228,7 +253,8 @@ export default function NuevoPresupuestoPage() {
                   <input
                     value={p.unidad}
                     onChange={(e) => actualizarPartida(i, 'unidad', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={partidaInputClass}
+                    style={partidaInputStyle}
                     placeholder="m2"
                   />
                 </div>
@@ -237,7 +263,8 @@ export default function NuevoPresupuestoPage() {
                     type="number"
                     value={p.metrado}
                     onChange={(e) => actualizarPartida(i, 'metrado', Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={partidaInputClass}
+                    style={partidaInputStyle}
                   />
                 </div>
                 <div className="col-span-2">
@@ -245,14 +272,16 @@ export default function NuevoPresupuestoPage() {
                     type="number"
                     value={p.precio_unitario}
                     onChange={(e) => actualizarPartida(i, 'precio_unitario', Number(e.target.value))}
-                    className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={partidaInputClass}
+                    style={partidaInputStyle}
                   />
                 </div>
                 <div className="col-span-2">
                   <select
                     value={p.tipo_costo}
                     onChange={(e) => actualizarPartida(i, 'tipo_costo', e.target.value)}
-                    className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                    className={partidaInputClass}
+                    style={partidaInputStyle}
                   >
                     {Object.entries(TIPO_COSTO_LABEL).map(([v, l]) => (
                       <option key={v} value={v}>
@@ -261,7 +290,7 @@ export default function NuevoPresupuestoPage() {
                     ))}
                   </select>
                 </div>
-                <div className="col-span-1 text-xs font-medium text-gray-700 text-right">
+                <div className="col-span-1 text-xs font-medium text-right" style={tp}>
                   S/ {(p.metrado * p.precio_unitario).toLocaleString('es-PE', { minimumFractionDigits: 2 })}
                 </div>
                 <div className="col-span-1 text-center">
@@ -275,26 +304,27 @@ export default function NuevoPresupuestoPage() {
             ))}
           </div>
 
-          <div className="mt-6 pt-4 border-t border-gray-100 space-y-2">
+          {/* Totales */}
+          <div className="mt-6 pt-4 space-y-2" style={{ borderTop: '1px solid var(--card-border)' }}>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Costo directo</span>
-              <span className="font-medium text-gray-900">S/ {totalDirecto.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+              <span style={ts}>Costo directo</span>
+              <span className="font-medium" style={tp}>S/ {totalDirecto.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Gastos generales (10%)</span>
-              <span className="text-gray-700">S/ {gastosGenerales.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+              <span style={ts}>Gastos generales (10%)</span>
+              <span style={ts}>S/ {gastosGenerales.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">Utilidad (8%)</span>
-              <span className="text-gray-700">S/ {utilidad.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+              <span style={ts}>Utilidad (8%)</span>
+              <span style={ts}>S/ {utilidad.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-gray-500">IGV (18%)</span>
-              <span className="text-gray-700">S/ {igv.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+              <span style={ts}>IGV (18%)</span>
+              <span style={ts}>S/ {igv.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
             </div>
-            <div className="flex justify-between text-base font-bold pt-2 border-t border-gray-200">
-              <span className="text-gray-900">TOTAL</span>
-              <span className="text-blue-600">S/ {total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
+            <div className="flex justify-between text-base font-bold pt-2" style={{ borderTop: '1px solid var(--card-border)' }}>
+              <span style={tp}>TOTAL</span>
+              <span className="text-amber-500">S/ {total.toLocaleString('es-PE', { minimumFractionDigits: 2 })}</span>
             </div>
           </div>
         </div>
@@ -305,20 +335,21 @@ export default function NuevoPresupuestoPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? 'Guardando...' : 'Guardar presupuesto'}
           </button>
         </div>
+
       </form>
     </div>
   )
 }
-
