@@ -65,46 +65,86 @@ export default function AgendarCitaPage() {
     router.refresh()
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
+
   return (
     <div className="max-w-xl mx-auto">
+
+      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Agendar cita</h1>
-        <p className="text-gray-500 text-sm mt-0.5">
+        <h1 className="text-2xl font-bold" style={tp}>Agendar cita</h1>
+        <p className="text-sm mt-0.5" style={ts}>
           {solicitud?.titulo ?? 'Cargando...'}
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="rounded-xl p-6 space-y-4" style={cardStyle}>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Fecha *</label>
-            <input name="fecha" type="date" required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className={labelClass} style={ts}>Fecha *</label>
+            <input
+              name="fecha"
+              type="date"
+              required
+              className={inputClass}
+              style={inputStyle}
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Hora *</label>
-            <input name="hora" type="time" required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className={labelClass} style={ts}>Hora *</label>
+            <input
+              name="hora"
+              type="time"
+              required
+              className={inputClass}
+              style={inputStyle}
+            />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de cita</label>
-            <select name="tipo_cita" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <label className={labelClass} style={ts}>Tipo de cita</label>
+            <select
+              name="tipo_cita"
+              className={inputClass}
+              style={inputStyle}
+            >
               <option value="visita_tecnica">Visita técnica</option>
               <option value="reunion_oficina">Reunión en oficina</option>
               <option value="virtual">Virtual</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Duración (min)</label>
-            <input name="duracion_min" type="number" defaultValue={60} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            <label className={labelClass} style={ts}>Duración (min)</label>
+            <input
+              name="duracion_min"
+              type="number"
+              defaultValue={60}
+              className={inputClass}
+              style={inputStyle}
+            />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Asignado a *</label>
-          <select name="asignado_a" required className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500">
+          <label className={labelClass} style={ts}>Asignado a *</label>
+          <select
+            name="asignado_a"
+            required
+            className={inputClass}
+            style={inputStyle}
+          >
             <option value="">Seleccionar personal</option>
             {personal.map(p => (
               <option key={p.id} value={p.id}>
@@ -115,29 +155,47 @@ export default function AgendarCitaPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Lugar</label>
-          <input name="lugar" className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Dirección o enlace de reunión virtual" />
+          <label className={labelClass} style={ts}>Lugar</label>
+          <input
+            name="lugar"
+            className={inputClass}
+            style={inputStyle}
+            placeholder="Dirección o enlace de reunión virtual"
+          />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notas previas</label>
-          <textarea name="notas_previas" rows={3} className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="Instrucciones o información para la cita..." />
+          <label className={labelClass} style={ts}>Notas previas</label>
+          <textarea
+            name="notas_previas"
+            rows={3}
+            className={inputClass}
+            style={inputStyle}
+            placeholder="Instrucciones o información para la cita..."
+          />
         </div>
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <div className="flex gap-3 pt-2">
-          <button type="button" onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
+          >
             Cancelar
           </button>
-          <button type="submit" disabled={loading}
-            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors">
+          <button
+            type="submit"
+            disabled={loading}
+            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
+          >
             {loading ? 'Agendando...' : 'Agendar cita'}
           </button>
         </div>
+
       </form>
     </div>
   )
 }
-

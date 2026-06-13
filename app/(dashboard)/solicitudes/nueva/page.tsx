@@ -77,31 +77,44 @@ export default function NuevaSolicitudPage() {
     }
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Nueva solicitud</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Registra una solicitud de servicio</p>
+        <h1 className="text-2xl font-bold" style={tp}>Nueva solicitud</h1>
+        <p className="text-sm mt-0.5" style={ts}>Registra una solicitud de servicio</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-5">
+      <form onSubmit={handleSubmit} className="rounded-xl p-6 space-y-5" style={cardStyle}>
         <div className="grid grid-cols-2 gap-4">
           <div className="col-span-2">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Título *</label>
+            <label className={labelClass} style={ts}>Título *</label>
             <input
               name="titulo"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
               placeholder="Ej: Construcción vivienda 2 pisos"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Cliente *</label>
+            <label className={labelClass} style={ts}>Cliente *</label>
             <select
               name="cliente_id"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             >
               <option value="">Seleccionar cliente</option>
               {clientes.map((c) => (
@@ -113,11 +126,12 @@ export default function NuevaSolicitudPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tipo de servicio *</label>
+            <label className={labelClass} style={ts}>Tipo de servicio *</label>
             <select
               name="tipo_servicio"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             >
               {Object.entries(TIPO_SERVICIO_LABEL).map(([v, l]) => (
                 <option key={v} value={v}>
@@ -128,10 +142,11 @@ export default function NuevaSolicitudPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Prioridad</label>
+            <label className={labelClass} style={ts}>Prioridad</label>
             <select
               name="prioridad"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             >
               <option value="baja">Baja</option>
               <option value="media">Media</option>
@@ -141,93 +156,102 @@ export default function NuevaSolicitudPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Fuente</label>
+            <label className={labelClass} style={ts}>Fuente</label>
             <input
               name="fuente"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
               placeholder="Referido, web, visita..."
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Descripción</label>
+          <label className={labelClass} style={ts}>Descripción</label>
           <textarea
             name="descripcion"
             rows={3}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
+            style={inputStyle}
           />
         </div>
 
         <div className="grid grid-cols-3 gap-4">
           <div className="col-span-3">
-            <label className="block text-sm font-medium text-gray-700 mb-1">Dirección de la obra</label>
+            <label className={labelClass} style={ts}>Dirección de la obra</label>
             <input
               name="direccion_obra"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Distrito</label>
+            <label className={labelClass} style={ts}>Distrito</label>
             <input
               name="distrito"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Provincia</label>
+            <label className={labelClass} style={ts}>Provincia</label>
             <input
               name="provincia"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+            <label className={labelClass} style={ts}>Departamento</label>
             <input
               name="departamento"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Área (m²)</label>
+            <label className={labelClass} style={ts}>Área (m²)</label>
             <input
               name="area_m2"
               type="number"
               step="0.01"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Presupuesto referencial (S/)</label>
+            <label className={labelClass} style={ts}>Presupuesto referencial (S/)</label>
             <input
               name="presupuesto_ref"
               type="number"
               step="0.01"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
         </div>
 
         <div className="flex gap-6">
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm cursor-pointer" style={ts}>
             <input type="checkbox" name="tiene_planos" value="true" className="rounded" />
             Tiene planos
           </label>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm cursor-pointer" style={ts}>
             <input type="checkbox" name="tiene_terreno" value="true" className="rounded" />
             Tiene terreno
           </label>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notas internas</label>
+          <label className={labelClass} style={ts}>Notas internas</label>
           <textarea
             name="notas_internas"
             rows={2}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
+            style={inputStyle}
           />
         </div>
 
@@ -237,14 +261,15 @@ export default function NuevaSolicitudPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? 'Guardando...' : 'Guardar solicitud'}
           </button>
@@ -253,4 +278,3 @@ export default function NuevaSolicitudPage() {
     </div>
   )
 }
-
