@@ -22,7 +22,7 @@ const ROL_COLOR: Record<string, string> = {
 export default async function PersonalPage() {
   const supabase = await createClient()
   const { data: personal } = await supabase
-    .from('profiles').select('*').eq('activo', true).order('nombre', { ascending: true })
+    .from('profiles').select('*').eq('activo', true).neq('rol', 'cliente').order('nombre', { ascending: true })
 
   const lista = personal ?? []
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
