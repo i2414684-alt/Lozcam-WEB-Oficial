@@ -1,10 +1,16 @@
-import { getObras } from '@/lib/supabase/queries/obras'
+import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_OBRA_COLOR, ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 
 export default async function ObrasPage() {
-  const obras = await getObras()
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('obras')
+    .select('*, clientes (nombres, apellidos, razon_social)')
+    .eq('activo', true)
+    .order('created_at', { ascending: false })
+  const obras = data ?? []
   const ts = { color: 'var(--text-secondary)' }
 
   return (
