@@ -1,6 +1,9 @@
-import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
+'use client'
+
+import { useState, useEffect } from 'react'
+import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
 
 const ROL_LABEL: Record<string, string> = {
@@ -18,42 +21,132 @@ const ROL_LABEL: Record<string, string> = {
   cliente:             'Cliente',
 }
 
-export default async function PersonalDetallePage({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  const { id } = await params
-  const supabase = await createClient()
+export default function PersonalDetallePage() {
+  const params = useParams<{ id: string }>()
+  const router = useRouter()
+  const id = params.id
 
-  const { data: perfil, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', id)
-    .single()
+  const supabase = createClient()
 
-  if (error || !perfil) notFound()
+  const [perfil, setPerfil] = useState<any>(null)
+  const [asignaciones, setAsignaciones] = useState<any[]>([])
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+  const [missing, setMissing] = useState(false)
+  const [showDeleteModal, setShowDeleteModal] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
-  const { data: asignaciones } = await supabase
-    .from('asignaciones')
-    .select('*, obras(nombre, estado)')
-    .eq('perfil_id', id)
-    .eq('activo', true)
+  useEffect(() => {
+    if (!id) { setMissing(true); return }
+
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setCurrentUserId(user?.id ?? null)
+    })
+
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('id', id)
+      .single()
+      .then(({ data, error }) => {
+        if (error || !data) { setMissing(true); return }
+        setPerfil(data)
+      })
+
+    supabase
+      .from('asignaciones')
+      .select('*, obras(nombre, estado)')
+      .eq('perfil_id', id)
+      .eq('activo', true)
+      .then(({ data }) => setAsignaciones(data ?? []))
+  }, [id])
+
+  async function handleDelete() {
+    if (currentUserId === id) return
+
+    setDeleting(true)
+    setDeleteError('')
+
+    const { error } = await supabase
+      .from('profiles')
+      .update({ activo: false })
+      .eq('id', id)
+
+    if (error) {
+      setDeleteError(error.message)
+      setDeleting(false)
+      return
+    }
+
+    router.push('/personal')
+    router.refresh()
+  }
 
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
-
   const mostrar = (v: any) =>
     v === null || v === undefined || v === '' ? '—' : String(v)
 
-  const especialidadesText =
-    Array.isArray(perfil.especialidades) && perfil.especialidades.length > 0
-      ? null
-      : '—'
+  if (missing) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-20">
+        <p style={tp}>Miembro no encontrado.</p>
+        <Link href="/personal" className="text-amber-500 text-sm mt-2 block">← Volver a personal</Link>
+      </div>
+    )
+  }
+
+  if (!perfil) {
+    return (
+      <div className="max-w-2xl mx-auto text-center py-20">
+        <p className="text-sm" style={ts}>Cargando...</p>
+      </div>
+    )
+  }
+
+  const esPropioUsuario = currentUserId === id
+  const especialidadesVacio =
+    !Array.isArray(perfil.especialidades) || perfil.especialidades.length === 0
 
   return (
     <div className="max-w-2xl mx-auto">
+
+      {/* Modal de confirmación soft-delete */}
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/60"
+            onClick={() => { if (!deleting) setShowDeleteModal(false) }}
+          />
+          <div className="relative z-10 rounded-xl p-6 w-full max-w-sm mx-4 shadow-xl bg-white dark:bg-gray-800" style={{ border: '1px solid var(--card-border)' }}>
+            <h2 className="text-base font-semibold mb-2" style={tp}>¿Eliminar este miembro del equipo?</h2>
+            <p className="text-sm mb-5" style={ts}>
+              Dejará de aparecer en los listados. Su historial de registros se conserva.
+            </p>
+            {deleteError && (
+              <p className="text-red-500 text-sm mb-3">{deleteError}</p>
+            )}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                disabled={deleting}
+                className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50"
+                style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleDelete}
+                disabled={deleting}
+                className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
+              >
+                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
@@ -66,6 +159,17 @@ export default async function PersonalDetallePage({
           </p>
         </div>
         <div className="flex items-center gap-3">
+          {esPropioUsuario ? (
+            <span className="text-xs" style={ts}>No puedes eliminar tu propio perfil</span>
+          ) : (
+            <button
+              onClick={() => setShowDeleteModal(true)}
+              className="text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+              style={{ border: '1px solid rgba(239,68,68,0.3)' }}
+            >
+              Eliminar
+            </button>
+          )}
           <Link
             href={`/personal/${id}/editar`}
             className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
@@ -138,7 +242,7 @@ export default async function PersonalDetallePage({
         </div>
         <div>
           <p className="text-xs mb-2" style={ts}>Especialidades</p>
-          {especialidadesText ? (
+          {especialidadesVacio ? (
             <p className="text-sm" style={tp}>—</p>
           ) : (
             <div className="flex flex-wrap gap-2">
@@ -155,9 +259,9 @@ export default async function PersonalDetallePage({
       {/* Obras asignadas */}
       <div className="rounded-xl p-5" style={cardStyle}>
         <h2 className="text-sm font-semibold mb-4" style={tp}>
-          Obras asignadas ({asignaciones?.length ?? 0})
+          Obras asignadas ({asignaciones.length})
         </h2>
-        {!asignaciones || asignaciones.length === 0 ? (
+        {asignaciones.length === 0 ? (
           <p className="text-sm text-center py-4" style={ts}>
             No tiene obras asignadas actualmente
           </p>

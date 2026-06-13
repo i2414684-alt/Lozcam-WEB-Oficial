@@ -43,7 +43,7 @@ export default function NuevoUsuarioPage() {
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { nombre, apellidos } }
+      options: { data: { nombre, apellidos, rol, dni, telefono } }
     })
 
     if (authError) {
