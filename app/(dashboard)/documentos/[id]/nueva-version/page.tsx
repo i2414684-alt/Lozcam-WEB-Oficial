@@ -66,7 +66,6 @@ export default function NuevaVersionPage() {
         subido_por: user.id,
       })
 
-
       await supabase
         .from('documentos')
         .update({ version_actual: nuevaVersion })
@@ -80,27 +79,37 @@ export default function NuevaVersionPage() {
       setError(message)
       setLoading(false)
     }
-
   }
+
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
 
   return (
     <div className="max-w-xl mx-auto">
+
+      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Nueva versión</h1>
-        <p className="text-gray-500 text-sm mt-0.5">
-          Sube una versión actualizada del documento
-        </p>
+        <h1 className="text-2xl font-bold" style={tp}>Nueva versión</h1>
+        <p className="text-sm mt-0.5" style={ts}>Sube una versión actualizada del documento</p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl border border-gray-200 p-6 space-y-4"
-      >
+      <form onSubmit={handleSubmit} className="rounded-xl p-6 space-y-4" style={cardStyle}>
+
+        {/* Zona de upload */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Archivo *
-          </label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-blue-400 transition-colors">
+          <label className={labelClass} style={ts}>Archivo *</label>
+          <div
+            className="border-2 border-dashed rounded-lg p-6 text-center transition-colors hover:border-amber-500"
+            style={{ borderColor: 'var(--card-border)' }}
+          >
             <input
               type="file"
               accept=".pdf,.dwg,.rvt,.xlsx,.docx,.png,.jpg,.jpeg"
@@ -111,30 +120,30 @@ export default function NuevaVersionPage() {
             <label htmlFor="archivo-input" className="cursor-pointer">
               {archivo ? (
                 <div>
-                  <p className="text-sm font-medium text-blue-600">{archivo.name}</p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="text-sm font-medium text-amber-500">{archivo.name}</p>
+                  <p className="text-xs mt-1" style={ts}>
                     {(archivo.size / 1024 / 1024).toFixed(2)} MB
                   </p>
                 </div>
               ) : (
                 <div>
-                  <p className="text-sm text-gray-500">Haz clic para seleccionar el archivo</p>
-                  <p className="text-xs text-gray-400 mt-1">PDF, DWG, RVT, Excel, Word, JPG, PNG</p>
+                  <p className="text-sm" style={ts}>Haz clic para seleccionar el archivo</p>
+                  <p className="text-xs mt-1" style={ts}>PDF, DWG, RVT, Excel, Word, JPG, PNG</p>
                 </div>
               )}
             </label>
           </div>
         </div>
 
+        {/* Notas de versión */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Notas de la versión
-          </label>
+          <label className={labelClass} style={ts}>Notas de la versión</label>
           <textarea
             name="notas"
             rows={3}
             placeholder="Describe los cambios de esta versión..."
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
+            style={inputStyle}
           />
         </div>
 
@@ -144,20 +153,21 @@ export default function NuevaVersionPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? 'Subiendo...' : 'Subir versión'}
           </button>
         </div>
+
       </form>
     </div>
   )
 }
-
