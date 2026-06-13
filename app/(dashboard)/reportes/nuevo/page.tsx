@@ -36,13 +36,7 @@ export default function NuevoReportePage() {
   function agregarMaterial() {
     setMateriales([
       ...materiales,
-      {
-        material: '',
-        unidad: 'und',
-        cantidad: 1,
-        costo_unitario: null,
-        proveedor: '',
-      },
+      { material: '', unidad: 'und', cantidad: 1, costo_unitario: null, proveedor: '' },
     ])
   }
 
@@ -106,49 +100,62 @@ export default function NuevoReportePage() {
     }
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
+  const partidaInputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const partidaInputClass = 'w-full rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-amber-500'
+
   return (
     <div className="max-w-2xl mx-auto">
+
+      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Nuevo reporte diario</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Parte diario de obra</p>
+        <h1 className="text-2xl font-bold" style={tp}>Nuevo reporte diario</h1>
+        <p className="text-sm mt-0.5" style={ts}>Parte diario de obra</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
-        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
-          <h2 className="text-sm font-semibold text-gray-700">Información general</h2>
+
+        {/* Información general */}
+        <div className="rounded-xl p-6 space-y-4" style={cardStyle}>
+          <h2 className="text-sm font-semibold" style={tp}>Información general</h2>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Obra *</label>
-              <select
-                name="obra_id"
-                required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
+              <label className={labelClass} style={ts}>Obra *</label>
+              <select name="obra_id" required className={inputClass} style={inputStyle}>
                 <option value="">Seleccionar obra</option>
                 {obras.map((o) => (
-                  <option key={o.id} value={o.id}>
-                    {o.nombre}
-                  </option>
+                  <option key={o.id} value={o.id}>{o.nombre}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Fecha *</label>
+              <label className={labelClass} style={ts}>Fecha *</label>
               <input
                 name="fecha"
                 type="date"
                 required
                 defaultValue={new Date().toISOString().split('T')[0]}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Clima</label>
-              <select
-                name="clima"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
+              <label className={labelClass} style={ts}>Clima</label>
+              <select name="clima" className={inputClass} style={inputStyle}>
                 <option value="">Sin registrar</option>
                 <option value="soleado">☀️ Soleado</option>
                 <option value="nublado">☁️ Nublado</option>
@@ -158,69 +165,81 @@ export default function NuevoReportePage() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Temperatura (°C)</label>
+              <label className={labelClass} style={ts}>Temperatura (°C)</label>
               <input
                 name="temp_celsius"
                 type="number"
                 step="0.1"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
                 placeholder="Ej: 22.5"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Personal en obra</label>
+              <label className={labelClass} style={ts}>Personal en obra</label>
               <input
                 name="personal_count"
                 type="number"
                 min="0"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
                 placeholder="Cantidad de personas"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Descripción de actividades *</label>
+            <label className={labelClass} style={ts}>Descripción de actividades *</label>
             <textarea
               name="descripcion"
               required
               rows={4}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
               placeholder="Describe las actividades realizadas durante el día..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Avance del día</label>
+            <label className={labelClass} style={ts}>Avance del día</label>
             <textarea
               name="avance_descripcion"
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
               placeholder="Describe el avance logrado..."
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Problemas / Observaciones</label>
+            <label className={labelClass} style={ts}>Problemas / Observaciones</label>
             <textarea
               name="problemas"
               rows={2}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
               placeholder="Problemas encontrados, observaciones importantes..."
             />
           </div>
         </div>
 
-        <div className="bg-white rounded-xl border border-gray-200 p-6">
+        {/* Materiales usados */}
+        <div className="rounded-xl p-6" style={cardStyle}>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-semibold text-gray-700">Materiales usados ({materiales.length})</h2>
-            <button type="button" onClick={agregarMaterial} className="text-sm text-blue-600 hover:text-blue-800 font-medium">
+            <h2 className="text-sm font-semibold" style={tp}>
+              Materiales usados ({materiales.length})
+            </h2>
+            <button
+              type="button"
+              onClick={agregarMaterial}
+              className="text-sm text-amber-500 hover:text-amber-400 font-medium"
+            >
               + Agregar material
             </button>
           </div>
 
           {materiales.length === 0 ? (
-            <p className="text-xs text-gray-400 text-center py-4">Sin materiales registrados — opcional</p>
+            <p className="text-xs text-center py-4" style={ts}>Sin materiales registrados — opcional</p>
           ) : (
             <div className="space-y-3">
               {materiales.map((m, i) => (
@@ -230,7 +249,8 @@ export default function NuevoReportePage() {
                       value={m.material}
                       onChange={(e) => actualizarMaterial(i, 'material', e.target.value)}
                       placeholder="Material"
-                      className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className={partidaInputClass}
+                      style={partidaInputStyle}
                     />
                   </div>
                   <div className="col-span-2">
@@ -238,7 +258,8 @@ export default function NuevoReportePage() {
                       value={m.unidad}
                       onChange={(e) => actualizarMaterial(i, 'unidad', e.target.value)}
                       placeholder="Unidad"
-                      className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className={partidaInputClass}
+                      style={partidaInputStyle}
                     />
                   </div>
                   <div className="col-span-2">
@@ -247,7 +268,8 @@ export default function NuevoReportePage() {
                       value={m.cantidad}
                       onChange={(e) => actualizarMaterial(i, 'cantidad', Number(e.target.value))}
                       placeholder="Cant."
-                      className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className={partidaInputClass}
+                      style={partidaInputStyle}
                     />
                   </div>
                   <div className="col-span-3">
@@ -255,7 +277,8 @@ export default function NuevoReportePage() {
                       value={m.proveedor}
                       onChange={(e) => actualizarMaterial(i, 'proveedor', e.target.value)}
                       placeholder="Proveedor"
-                      className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs text-gray-900 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                      className={partidaInputClass}
+                      style={partidaInputStyle}
                     />
                   </div>
                   <div className="col-span-1 text-center">
@@ -279,20 +302,21 @@ export default function NuevoReportePage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? 'Guardando...' : 'Guardar reporte'}
           </button>
         </div>
+
       </form>
     </div>
   )
 }
-
