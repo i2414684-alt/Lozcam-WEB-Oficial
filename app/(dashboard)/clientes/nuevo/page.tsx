@@ -50,39 +50,51 @@ export default function NuevoClientePage() {
     router.refresh()
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Nuevo cliente</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Completa los datos del cliente</p>
+        <h1 className="text-2xl font-bold" style={tp}>Nuevo cliente</h1>
+        <p className="text-sm mt-0.5" style={ts}>Completa los datos del cliente</p>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="bg-white rounded-xl border border-gray-200 p-6 space-y-5"
-      >
+      <form onSubmit={handleSubmit} className="rounded-xl p-6 space-y-5" style={cardStyle}>
+
+        {/* Toggle tipo de persona */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de persona</label>
+          <label className={labelClass} style={ts}>Tipo de persona</label>
           <div className="flex gap-3">
             <button
               type="button"
               onClick={() => setTipo('natural')}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
+              className="flex-1 py-2 rounded-lg text-sm font-medium border transition-colors"
+              style={
                 tipo === 'natural'
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
-              }`}
+                  ? { background: '#f59e0b', color: '#030712', borderColor: '#f59e0b' }
+                  : { background: 'var(--card-bg)', color: 'var(--text-secondary)', borderColor: 'var(--card-border)' }
+              }
             >
               Persona Natural
             </button>
             <button
               type="button"
               onClick={() => setTipo('juridica')}
-              className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-colors ${
+              className="flex-1 py-2 rounded-lg text-sm font-medium border transition-colors"
+              style={
                 tipo === 'juridica'
-                  ? 'bg-blue-600 text-white border-blue-600'
-                  : 'bg-white text-gray-600 border-gray-300 hover:border-blue-400'
-              }`}
+                  ? { background: '#f59e0b', color: '#030712', borderColor: '#f59e0b' }
+                  : { background: 'var(--card-bg)', color: 'var(--text-secondary)', borderColor: 'var(--card-border)' }
+              }
             >
               Persona Jurídica
             </button>
@@ -92,55 +104,61 @@ export default function NuevoClientePage() {
         {tipo === 'natural' ? (
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nombres *</label>
+              <label className={labelClass} style={ts}>Nombres *</label>
               <input
                 name="nombres"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Apellidos *</label>
+              <label className={labelClass} style={ts}>Apellidos *</label>
               <input
                 name="apellidos"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">DNI *</label>
+              <label className={labelClass} style={ts}>DNI *</label>
               <input
                 name="dni"
                 maxLength={8}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
           </div>
         ) : (
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Razón Social *</label>
+              <label className={labelClass} style={ts}>Razón Social *</label>
               <input
                 name="razon_social"
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">RUC *</label>
+              <label className={labelClass} style={ts}>RUC *</label>
               <input
                 name="ruc"
                 maxLength={11}
                 required
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre Comercial</label>
+              <label className={labelClass} style={ts}>Nombre Comercial</label>
               <input
                 name="nombre_comercial"
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className={inputClass}
+                style={inputStyle}
               />
             </div>
           </div>
@@ -148,64 +166,72 @@ export default function NuevoClientePage() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className={labelClass} style={ts}>Email</label>
             <input
               name="email"
               type="email"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Teléfono</label>
+            <label className={labelClass} style={ts}>Teléfono</label>
             <input
               name="telefono"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">WhatsApp</label>
+            <label className={labelClass} style={ts}>WhatsApp</label>
             <input
               name="whatsapp"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Distrito</label>
+            <label className={labelClass} style={ts}>Distrito</label>
             <input
               name="distrito"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Provincia</label>
+            <label className={labelClass} style={ts}>Provincia</label>
             <input
               name="provincia"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Departamento</label>
+            <label className={labelClass} style={ts}>Departamento</label>
             <input
               name="departamento"
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Dirección</label>
+          <label className={labelClass} style={ts}>Dirección</label>
           <input
             name="direccion"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
+            style={inputStyle}
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Notas</label>
+          <label className={labelClass} style={ts}>Notas</label>
           <textarea
             name="notas"
             rows={3}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
+            style={inputStyle}
           />
         </div>
 
@@ -215,14 +241,15 @@ export default function NuevoClientePage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? 'Guardando...' : 'Guardar cliente'}
           </button>
@@ -231,4 +258,3 @@ export default function NuevoClientePage() {
     </div>
   )
 }
-
