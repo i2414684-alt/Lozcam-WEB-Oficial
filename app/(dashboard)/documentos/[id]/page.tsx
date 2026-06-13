@@ -36,10 +36,14 @@ export default async function DocumentoDetallePage({
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
-  const dividerStyle = { borderColor: 'var(--card-border)' }
+
+  const mostrar = (v: any) =>
+    v === null || v === undefined || v === '' ? '—' : String(v)
 
   return (
     <div className="max-w-3xl mx-auto">
+
+      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
           <div className="flex items-center gap-3 mb-1">
@@ -65,37 +69,46 @@ export default async function DocumentoDetallePage({
         </div>
       </div>
 
-      <div className="rounded-xl p-6 mb-4" style={cardStyle}>
+      {/* Detalles del documento */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-3" style={tp}>Detalles</h2>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-xs mb-1" style={ts}>Obra</p>
-            <p className="text-sm font-medium" style={tp}>{doc.obras?.nombre ?? '—'}</p>
+            <p className="text-xs mb-0.5" style={ts}>Obra asociada</p>
+            <p className="text-sm font-medium" style={tp}>{mostrar(doc.obras?.nombre)}</p>
           </div>
-          {doc.numero_plano && (
-            <div>
-              <p className="text-xs mb-1" style={ts}>Número de plano</p>
-              <p className="text-sm font-medium font-mono" style={tp}>{doc.numero_plano}</p>
-            </div>
-          )}
-          {doc.escala && (
-            <div>
-              <p className="text-xs mb-1" style={ts}>Escala</p>
-              <p className="text-sm font-medium" style={tp}>{doc.escala}</p>
-            </div>
-          )}
           <div>
-            <p className="text-xs mb-1" style={ts}>Fecha registro</p>
-            <p className="text-sm font-medium" style={tp}>{formatFecha(doc.created_at)}</p>
+            <p className="text-xs mb-0.5" style={ts}>Tipo de documento</p>
+            <p className="text-sm" style={tp}>
+              {TIPO_DOCUMENTO_LABEL[doc.tipo] ?? mostrar(doc.tipo)}
+            </p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Número de plano</p>
+            <p className="text-sm font-mono" style={tp}>{mostrar(doc.numero_plano)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Escala</p>
+            <p className="text-sm" style={tp}>{mostrar(doc.escala)}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Versión actual</p>
+            <p className="text-sm" style={tp}>v{doc.version_actual}</p>
+          </div>
+          <div>
+            <p className="text-xs mb-0.5" style={ts}>Fecha de registro</p>
+            <p className="text-sm" style={tp}>{formatFecha(doc.created_at)}</p>
           </div>
         </div>
-        {doc.descripcion && (
-          <div className="mt-4 pt-4 border-t" style={dividerStyle}>
-            <p className="text-xs mb-1" style={ts}>Descripción</p>
-            <p className="text-sm" style={ts}>{doc.descripcion}</p>
-          </div>
-        )}
       </div>
 
+      {/* Descripción */}
+      <div className="rounded-xl p-5 mb-4" style={cardStyle}>
+        <h2 className="text-sm font-semibold mb-2" style={tp}>Descripción</h2>
+        <p className="text-sm" style={ts}>{mostrar(doc.descripcion)}</p>
+      </div>
+
+      {/* Versiones */}
       <div className="rounded-xl p-5" style={cardStyle}>
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-sm font-semibold" style={tp}>Versiones ({versiones?.length ?? 0})</h2>
@@ -118,7 +131,7 @@ export default async function DocumentoDetallePage({
                 style={{ border: '1px solid var(--card-border)' }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center text-xs font-bold">
+                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 text-amber-500 flex items-center justify-center text-xs font-bold flex-shrink-0">
                     v{v.version}
                   </div>
                   <div>
@@ -134,15 +147,16 @@ export default async function DocumentoDetallePage({
                   href={v.archivo_url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-amber-500 hover:text-amber-400 font-medium"
+                  className="text-sm text-amber-500 hover:text-amber-400 font-medium flex-shrink-0"
                 >
-                  Descargar
+                  Descargar →
                 </a>
               </div>
             ))}
           </div>
         )}
       </div>
+
     </div>
   )
 }

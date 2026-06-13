@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { formatFecha, formatFechaHora } from '@/lib/utils/formatters'
+import { formatFecha } from '@/lib/utils/formatters'
 
 export default async function ReporteDetallePage({
   params,
@@ -40,76 +40,91 @@ export default async function ReporteDetallePage({
     viento: '💨',
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+
   return (
     <div className="max-w-3xl mx-auto">
+
+      {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Reporte — {formatFecha(reporte.fecha)}</h1>
-          <p className="text-gray-500 text-sm mt-0.5">{reporte.obras?.nombre}</p>
+          <h1 className="text-2xl font-bold" style={tp}>Reporte — {formatFecha(reporte.fecha)}</h1>
+          <p className="text-sm mt-0.5" style={ts}>{reporte.obras?.nombre}</p>
         </div>
-        <Link href="/reportes" className="text-sm text-gray-500 hover:text-gray-700">
+        <Link href="/reportes" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
           ← Volver
         </Link>
       </div>
 
+      {/* KPI cards */}
       <div className="grid grid-cols-3 gap-4 mb-4">
-        <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
+        <div className="rounded-xl p-4 text-center" style={cardStyle}>
           <p className="text-2xl mb-1">
             {reporte.clima ? climaEmoji[reporte.clima] ?? '🌡️' : '—'}
           </p>
-          <p className="text-xs text-gray-500">{reporte.clima ?? 'Sin registrar'}</p>
-          {reporte.temp_celsius && <p className="text-sm font-medium text-gray-900 mt-0.5">{reporte.temp_celsius}°C</p>}
+          <p className="text-xs" style={ts}>{reporte.clima ?? 'Sin registrar'}</p>
+          {reporte.temp_celsius && (
+            <p className="text-sm font-medium mt-0.5" style={tp}>{reporte.temp_celsius}°C</p>
+          )}
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-          <p className="text-3xl font-bold text-gray-900 mb-1">{reporte.personal_count ?? '—'}</p>
-          <p className="text-xs text-gray-500">Personal en obra</p>
+        <div className="rounded-xl p-4 text-center" style={cardStyle}>
+          <p className="text-3xl font-bold mb-1" style={tp}>{reporte.personal_count ?? '—'}</p>
+          <p className="text-xs" style={ts}>Personal en obra</p>
         </div>
-        <div className="bg-white rounded-xl border border-gray-200 p-4 text-center">
-          <p className="text-3xl font-bold text-orange-500 mb-1">{incidencias?.length ?? 0}</p>
-          <p className="text-xs text-gray-500">Incidencias</p>
+        <div className="rounded-xl p-4 text-center" style={cardStyle}>
+          <p className="text-3xl font-bold mb-1 text-amber-500">{incidencias?.length ?? 0}</p>
+          <p className="text-xs" style={ts}>Incidencias</p>
         </div>
       </div>
 
-      <div className="bg-white rounded-xl border border-gray-200 p-6 mb-4 space-y-4">
+      {/* Actividades + Avance + Problemas */}
+      <div className="rounded-xl p-6 mb-4 space-y-4" style={cardStyle}>
         <div>
-          <h2 className="text-sm font-semibold text-gray-700 mb-2">Actividades del día</h2>
-          <p className="text-sm text-gray-600">{reporte.descripcion}</p>
+          <h2 className="text-sm font-semibold mb-2" style={tp}>Actividades del día</h2>
+          <p className="text-sm" style={ts}>{reporte.descripcion}</p>
         </div>
         {reporte.avance_descripcion && (
-          <div className="pt-3 border-t border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-700 mb-2">Avance</h2>
-            <p className="text-sm text-gray-600">{reporte.avance_descripcion}</p>
+          <div className="pt-3" style={{ borderTop: '1px solid var(--card-border)' }}>
+            <h2 className="text-sm font-semibold mb-2" style={tp}>Avance</h2>
+            <p className="text-sm" style={ts}>{reporte.avance_descripcion}</p>
           </div>
         )}
         {reporte.problemas && (
-          <div className="pt-3 border-t border-gray-100">
-            <h2 className="text-sm font-semibold text-orange-600 mb-2">⚠️ Problemas / Observaciones</h2>
-            <p className="text-sm text-gray-600">{reporte.problemas}</p>
+          <div className="pt-3" style={{ borderTop: '1px solid var(--card-border)' }}>
+            <h2 className="text-sm font-semibold mb-2 text-orange-500">⚠️ Problemas / Observaciones</h2>
+            <p className="text-sm" style={ts}>{reporte.problemas}</p>
           </div>
         )}
       </div>
 
+      {/* Materiales usados */}
       {materiales && materiales.length > 0 && (
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-4">
-          <div className="px-5 py-4 border-b border-gray-100">
-            <h2 className="text-sm font-semibold text-gray-700">Materiales usados ({materiales.length})</h2>
+        <div className="rounded-xl overflow-hidden mb-4" style={cardStyle}>
+          <div className="px-5 py-4" style={{ borderBottom: '1px solid var(--card-border)' }}>
+            <h2 className="text-sm font-semibold" style={tp}>Materiales usados ({materiales.length})</h2>
           </div>
           <table className="w-full text-sm">
-            <thead className="bg-gray-50">
+            <thead style={{ background: 'var(--table-header-bg)', borderBottom: '2px solid var(--table-border)' }}>
               <tr>
-                <th className="text-left px-4 py-2 text-xs text-gray-500 font-medium">Material</th>
-                <th className="text-left px-4 py-2 text-xs text-gray-500 font-medium">Cantidad</th>
-                <th className="text-left px-4 py-2 text-xs text-gray-500 font-medium">Unidad</th>
-                <th className="text-left px-4 py-2 text-xs text-gray-500 font-medium">Proveedor</th>
+                <th className="text-left px-4 py-2 text-xs font-medium" style={ts}>Material</th>
+                <th className="text-left px-4 py-2 text-xs font-medium" style={ts}>Cantidad</th>
+                <th className="text-left px-4 py-2 text-xs font-medium" style={ts}>Unidad</th>
+                <th className="text-left px-4 py-2 text-xs font-medium" style={ts}>Proveedor</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-50">
+            <tbody>
               {materiales.map((m: any) => (
-                <tr key={m.id}>
-                  <td className="px-4 py-2 text-gray-900">{m.material}</td>
-                  <td className="px-4 py-2 text-gray-600">{m.cantidad}</td>
-                  <td className="px-4 py-2 text-gray-600">{m.unidad}</td>
-                  <td className="px-4 py-2 text-gray-500">{m.proveedor ?? '—'}</td>
+                <tr
+                  key={m.id}
+                  className="hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                  style={{ borderTop: '1px solid var(--table-border)' }}
+                >
+                  <td className="px-4 py-2" style={tp}>{m.material}</td>
+                  <td className="px-4 py-2" style={ts}>{m.cantidad}</td>
+                  <td className="px-4 py-2" style={ts}>{m.unidad}</td>
+                  <td className="px-4 py-2" style={ts}>{m.proveedor ?? '—'}</td>
                 </tr>
               ))}
             </tbody>
@@ -117,15 +132,19 @@ export default async function ReporteDetallePage({
         </div>
       )}
 
-      <div className="bg-white rounded-xl border border-gray-200 p-5">
+      {/* Incidencias */}
+      <div className="rounded-xl p-5" style={cardStyle}>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-gray-700">Incidencias ({incidencias?.length ?? 0})</h2>
-          <Link href={`/reportes/${id}/incidencia`} className="text-sm text-red-600 hover:text-red-800 font-medium">
+          <h2 className="text-sm font-semibold" style={tp}>Incidencias ({incidencias?.length ?? 0})</h2>
+          <Link
+            href={`/reportes/${id}/incidencia`}
+            className="text-sm text-red-500 hover:text-red-400 font-medium"
+          >
             + Registrar incidencia
           </Link>
         </div>
         {!incidencias || incidencias.length === 0 ? (
-          <p className="text-gray-400 text-sm text-center py-4">Sin incidencias registradas ✅</p>
+          <p className="text-sm text-center py-4" style={ts}>Sin incidencias registradas ✅</p>
         ) : (
           <div className="space-y-3">
             {incidencias.map((inc: any) => (
@@ -133,14 +152,14 @@ export default async function ReporteDetallePage({
                 key={inc.id}
                 className={`p-3 rounded-lg border ${
                   inc.gravedad === 'grave' || inc.gravedad === 'critica'
-                    ? 'border-red-200 bg-red-50'
+                    ? 'border-red-200 bg-red-50 dark:border-red-900/40 dark:bg-red-950/20'
                     : inc.gravedad === 'moderada'
-                    ? 'border-yellow-200 bg-yellow-50'
-                    : 'border-gray-200 bg-gray-50'
+                    ? 'border-yellow-200 bg-yellow-50 dark:border-yellow-900/40 dark:bg-yellow-950/20'
+                    : 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5'
                 }`}
               >
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-medium text-gray-700 uppercase">{inc.tipo}</span>
+                  <span className="text-xs font-medium uppercase" style={tp}>{inc.tipo}</span>
                   <div className="flex items-center gap-2">
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full font-medium ${
@@ -155,12 +174,14 @@ export default async function ReporteDetallePage({
                     >
                       {inc.gravedad.charAt(0).toUpperCase() + inc.gravedad.slice(1)}
                     </span>
-                    {inc.resuelto && <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Resuelto</span>}
+                    {inc.resuelto && (
+                      <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Resuelto</span>
+                    )}
                   </div>
                 </div>
-                <p className="text-sm text-gray-600">{inc.descripcion}</p>
+                <p className="text-sm" style={ts}>{inc.descripcion}</p>
                 {inc.afecta_plazo && (
-                  <p className="text-xs text-red-600 mt-1">
+                  <p className="text-xs text-red-500 mt-1">
                     ⏱️ Afecta plazo · {inc.dias_retraso} día{inc.dias_retraso !== 1 ? 's' : ''} de retraso
                   </p>
                 )}
@@ -169,7 +190,7 @@ export default async function ReporteDetallePage({
           </div>
         )}
       </div>
+
     </div>
   )
 }
-

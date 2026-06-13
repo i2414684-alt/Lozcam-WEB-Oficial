@@ -45,8 +45,52 @@ html.dark {
   --table-header-text: #9ca3af;
   --table-row-hover: rgba(245, 158, 11, 0.08);
   --table-border: rgba(255,255,255,0.08);
+
+  /* Dropdown sólido para opciones en modo oscuro */
+  --select-option-bg: #1f2937;
 }
 
+/* Select theming — closed state usa variables del tema */
+select {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+  border-color: var(--card-border);
+  color-scheme: light;
+}
 
+select option {
+  background-color: var(--card-bg);
+  color: var(--text-primary);
+}
 
+select option:hover {
+  background-color: var(--table-row-hover);
+  color: var(--text-primary);
+}
 
+select option:checked {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* En modo oscuro: color-scheme: dark le dice al navegador que pinte
+   el popup nativo con colores oscuros del SO (la única forma confiable
+   de evitar el fondo blanco del dropdown en Chrome/Edge/Firefox) */
+html.dark select {
+  color-scheme: dark;
+}
+
+html.dark select option {
+  background-color: var(--select-option-bg);
+  color: var(--text-primary);
+}
+
+html.dark select option:hover {
+  background-color: var(--table-row-hover);
+  color: var(--text-primary);
+}
+
+html.dark select option:checked {
+  background-color: var(--select-option-bg) !important;
+  color: var(--text-primary) !important;
+}

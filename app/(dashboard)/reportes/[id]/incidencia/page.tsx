@@ -56,21 +56,35 @@ export default function NuevaIncidenciaPage() {
     router.refresh()
   }
 
+  const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
+  const tp = { color: 'var(--text-primary)' }
+  const ts = { color: 'var(--text-secondary)' }
+  const inputStyle = {
+    background: 'var(--card-bg)',
+    border: '1px solid var(--card-border)',
+    color: 'var(--text-primary)',
+  }
+  const inputClass = 'w-full rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500'
+  const labelClass = 'block text-sm font-medium mb-1'
+
   return (
     <div className="max-w-xl mx-auto">
+
+      {/* Header */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Nueva incidencia</h1>
-        <p className="text-gray-500 text-sm mt-0.5">Registra un evento importante en obra</p>
+        <h1 className="text-2xl font-bold" style={tp}>Nueva incidencia</h1>
+        <p className="text-sm mt-0.5" style={ts}>Registra un evento importante en obra</p>
       </div>
 
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      <form onSubmit={handleSubmit} className="rounded-xl p-6 space-y-4" style={cardStyle}>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tipo *</label>
+            <label className={labelClass} style={ts}>Tipo *</label>
             <select
               name="tipo"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             >
               <option value="accidente">Accidente</option>
               <option value="robo">Robo / Hurto</option>
@@ -82,11 +96,12 @@ export default function NuevaIncidenciaPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Gravedad *</label>
+            <label className={labelClass} style={ts}>Gravedad *</label>
             <select
               name="gravedad"
               required
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             >
               <option value="leve">Leve</option>
               <option value="moderada">Moderada</option>
@@ -97,18 +112,19 @@ export default function NuevaIncidenciaPage() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Descripción *</label>
+          <label className={labelClass} style={ts}>Descripción *</label>
           <textarea
             name="descripcion"
             required
             rows={4}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className={inputClass}
+            style={inputStyle}
             placeholder="Describe detalladamente lo que ocurrió..."
           />
         </div>
 
         <div>
-          <label className="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+          <label className="flex items-center gap-2 text-sm cursor-pointer" style={ts}>
             <input
               type="checkbox"
               checked={afectaPlazo}
@@ -121,13 +137,14 @@ export default function NuevaIncidenciaPage() {
 
         {afectaPlazo && (
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Días de retraso estimados</label>
+            <label className={labelClass} style={ts}>Días de retraso estimados</label>
             <input
               name="dias_retraso"
               type="number"
               min="1"
               defaultValue={1}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className={inputClass}
+              style={inputStyle}
             />
           </div>
         )}
@@ -138,20 +155,21 @@ export default function NuevaIncidenciaPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex-1 border border-gray-300 text-gray-700 rounded-lg py-2 text-sm font-medium hover:bg-gray-50 transition-colors"
+            className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5"
+            style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-red-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-red-700 disabled:opacity-50 transition-colors"
+            className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {loading ? 'Guardando...' : 'Registrar incidencia'}
           </button>
         </div>
       </form>
+
     </div>
   )
 }
-
