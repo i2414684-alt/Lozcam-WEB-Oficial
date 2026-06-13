@@ -1,10 +1,38 @@
-import { getClientes } from '@/lib/supabase/queries/clientes'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
 import { FilaTabla } from './TablaHover'
+import { AccionesFila } from '@/components/shared/AccionesFila'
 
-export default async function ClientesPage() {
-  const clientes = await getClientes()
+export default function ClientesPage() {
+  const supabase = createClient()
+
+  const [clientes, setClientes] = useState<any[]>([])
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('clientes')
+      .select('*')
+      .eq('activo', true)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        setClientes(data ?? [])
+        setCargando(false)
+      })
+  }, [])
+
+  async function handleEliminar(id: number | string) {
+    const { error } = await supabase
+      .from('clientes')
+      .update({ activo: false })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    setClientes(prev => prev.filter(c => c.id !== id))
+  }
 
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
@@ -14,12 +42,9 @@ export default async function ClientesPage() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold" style={tp}>
-            Clientes
-          </h1>
+          <h1 className="text-2xl font-bold" style={tp}>Clientes</h1>
           <p className="text-sm mt-0.5" style={ts}>
-            {clientes.length} cliente{clientes.length !== 1 ? 's' : ''} registrado
-            {clientes.length !== 1 ? 's' : ''}
+            {cargando ? '...' : `${clientes.length} cliente${clientes.length !== 1 ? 's' : ''} registrado${clientes.length !== 1 ? 's' : ''}`}
           </p>
         </div>
         <Link
@@ -30,11 +55,13 @@ export default async function ClientesPage() {
         </Link>
       </div>
 
-      {clientes.length === 0 ? (
+      {cargando ? (
         <div className="rounded-xl p-12 text-center" style={cardStyle}>
-          <p className="text-sm" style={ts}>
-            No hay clientes registrados aún
-          </p>
+          <p className="text-sm" style={ts}>Cargando...</p>
+        </div>
+      ) : clientes.length === 0 ? (
+        <div className="rounded-xl p-12 text-center" style={cardStyle}>
+          <p className="text-sm" style={ts}>No hay clientes registrados aún</p>
           <Link
             href="/clientes/nuevo"
             className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
@@ -47,24 +74,12 @@ export default async function ClientesPage() {
           <table className="w-full text-sm">
             <thead style={{ background: 'var(--table-header-bg)' }}>
               <tr style={{ borderBottom: '2px solid var(--table-border)' }}>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
-                  Cliente
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
-                  DNI / RUC
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
-                  Contacto
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
-                  Distrito
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
-                  Registrado
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>
-                  Acción
-                </th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Cliente</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>DNI / RUC</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Contacto</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Distrito</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Registrado</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -84,26 +99,19 @@ export default async function ClientesPage() {
                     {cliente.tipo_persona === 'natural' ? cliente.dni : cliente.ruc}
                   </td>
                   <td className="px-4 py-3">
-                    <div className="text-sm" style={ts}>
-                      {cliente.email ?? '—'}
-                    </div>
-                    <div className="text-xs mt-0.5" style={ts}>
-                      {cliente.telefono ?? '—'}
-                    </div>
+                    <div className="text-sm" style={ts}>{cliente.email ?? '—'}</div>
+                    <div className="text-xs mt-0.5" style={ts}>{cliente.telefono ?? '—'}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm" style={ts}>
-                    {cliente.distrito ?? '—'}
-                  </td>
-                  <td className="px-4 py-3 text-xs" style={ts}>
-                    {formatFecha(cliente.created_at)}
-                  </td>
+                  <td className="px-4 py-3 text-sm" style={ts}>{cliente.distrito ?? '—'}</td>
+                  <td className="px-4 py-3 text-xs" style={ts}>{formatFecha(cliente.created_at)}</td>
                   <td className="px-4 py-3">
-                    <Link
-                      href={`/clientes/${cliente.id}`}
-                      className="text-amber-500 hover:text-amber-400 font-medium text-sm"
-                    >
-                      Ver
-                    </Link>
+                    <AccionesFila
+                      id={cliente.id}
+                      rutaBase="/clientes"
+                      onEliminar={handleEliminar}
+                      tituloModal="¿Eliminar este cliente?"
+                      descripcionModal="Dejará de aparecer en los listados. (No se elimina su historial.)"
+                    />
                   </td>
                 </FilaTabla>
               ))}
@@ -114,4 +122,3 @@ export default async function ClientesPage() {
     </div>
   )
 }
-
