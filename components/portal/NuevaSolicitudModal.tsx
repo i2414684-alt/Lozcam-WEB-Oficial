@@ -221,7 +221,7 @@ export default function NuevaSolicitudModal() {
                   <button
                     type="submit"
                     disabled={pending}
-                    className="inline-flex items-center gap-2 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-black hover:bg-amber-400 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center gap-2 rounded-lg bg-action hover:bg-action-hover px-4 py-2 text-sm font-semibold text-white disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {pending ? 'Enviando...' : 'Enviar solicitud'}
                   </button>

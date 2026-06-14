@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_PAGO_COLOR, ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
+import { Pencil, Trash2 } from 'lucide-react'
 
 export default function PagoDetallePage() {
   const params = useParams<{ id: string }>()
@@ -148,15 +149,17 @@ export default function PagoDetallePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
             style={{ border: '1px solid rgba(239,68,68,0.3)' }}
           >
+            <Trash2 size={15} />
             Eliminar
           </button>
           <Link
             href={`/pagos/${id}/editar`}
-            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm border border-accent/40 text-accent hover:bg-accent/10 px-3 py-1.5 rounded-lg font-medium transition-colors"
           >
+            <Pencil size={15} />
             Editar
           </Link>
           <Link href="/pagos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>

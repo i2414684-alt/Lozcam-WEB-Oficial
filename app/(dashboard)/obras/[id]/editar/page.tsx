@@ -345,7 +345,7 @@ export default function EditarObraPage() {
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
+            className="flex-1 bg-action hover:bg-action-hover text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
             {saving ? 'Guardando...' : 'Guardar cambios'}
           </button>

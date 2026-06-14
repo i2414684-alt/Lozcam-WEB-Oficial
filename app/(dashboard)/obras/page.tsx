@@ -25,7 +25,7 @@ export default async function ObrasPage() {
         </div>
         <Link
           href="/obras/nueva"
-          className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           + Nueva obra
         </Link>
@@ -39,7 +39,7 @@ export default async function ObrasPage() {
           <p className="text-sm" style={ts}>No hay obras registradas aún</p>
           <Link
             href="/obras/nueva"
-            className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
+            className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
             Registrar primera obra
           </Link>

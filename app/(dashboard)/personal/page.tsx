@@ -36,7 +36,7 @@ export default async function PersonalPage() {
           <h1 className="text-2xl font-bold" style={tp}>Personal</h1>
           <p className="text-sm mt-0.5" style={ts}>{lista.length} miembro{lista.length !== 1 ? 's' : ''} del equipo</p>
         </div>
-        <Link href="/personal/nuevo" className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <Link href="/personal/nuevo" className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           + Nuevo usuario
         </Link>
       </div>

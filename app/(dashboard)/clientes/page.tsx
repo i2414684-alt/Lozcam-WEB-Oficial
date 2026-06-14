@@ -49,7 +49,7 @@ export default function ClientesPage() {
         </div>
         <Link
           href="/clientes/nuevo"
-          className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           + Nuevo cliente
         </Link>
@@ -64,7 +64,7 @@ export default function ClientesPage() {
           <p className="text-sm" style={ts}>No hay clientes registrados aún</p>
           <Link
             href="/clientes/nuevo"
-            className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
+            className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
             Registrar primer cliente
           </Link>

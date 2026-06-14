@@ -10,6 +10,7 @@ import {
   ESTADO_DOCUMENTO_COLOR,
   ESTADO_DOCUMENTO_LABEL,
 } from '@/lib/types/documentos'
+import { Pencil, Trash2 } from 'lucide-react'
 
 export default function DocumentoDetallePage() {
   const params = useParams<{ id: string }>()
@@ -144,15 +145,17 @@ export default function DocumentoDetallePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
             style={{ border: '1px solid rgba(239,68,68,0.3)' }}
           >
+            <Trash2 size={15} />
             Eliminar
           </button>
           <Link
             href={`/documentos/${id}/editar`}
-            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm border border-accent/40 text-accent hover:bg-accent/10 px-3 py-1.5 rounded-lg font-medium transition-colors"
           >
+            <Pencil size={15} />
             Editar
           </Link>
           <Link href="/documentos" className="text-sm hover:opacity-70 transition-opacity" style={ts}>

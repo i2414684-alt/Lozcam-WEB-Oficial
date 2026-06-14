@@ -26,7 +26,7 @@ export default async function PagosPage() {
             {lista.length} pago{lista.length !== 1 ? 's' : ''} registrado{lista.length !== 1 ? 's' : ''}
           </p>
         </div>
-        <Link href="/pagos/nuevo" className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+        <Link href="/pagos/nuevo" className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           + Registrar pago
         </Link>
       </div>
@@ -49,7 +49,7 @@ export default async function PagosPage() {
       {lista.length === 0 ? (
         <div className="rounded-xl p-12 text-center" style={cardStyle}>
           <p className="text-sm" style={ts}>No hay pagos registrados aÃºn</p>
-          <Link href="/pagos/nuevo" className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium">
+          <Link href="/pagos/nuevo" className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
             Registrar primer pago
           </Link>
         </div>

@@ -24,12 +24,12 @@ export default async function ReportesPage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <Link href="/reportes/nuevo" className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors">
+          <Link href="/reportes/nuevo" className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
             + Nuevo reporte
           </Link>
           <a
             href="/api/reportes/export"
-            className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2"
+            className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors inline-flex items-center gap-2"
           >
             Exportar a Excel
           </a>
@@ -54,7 +54,7 @@ export default async function ReportesPage() {
       {lista.length === 0 ? (
         <div className="rounded-xl p-12 text-center" style={cardStyle}>
           <p className="text-sm" style={ts}>No hay reportes registrados aún</p>
-          <Link href="/reportes/nuevo" className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium">
+          <Link href="/reportes/nuevo" className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
             Crear primer reporte
           </Link>
         </div>

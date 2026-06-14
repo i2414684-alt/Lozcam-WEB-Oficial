@@ -140,7 +140,7 @@ export default function ClienteDetallePage() {
           </button>
           <Link
             href={`/clientes/${cliente.id}/editar`}
-            className="flex items-center gap-1.5 text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm border border-accent/40 text-accent hover:bg-accent/10 px-3 py-1.5 rounded-lg font-medium transition-colors"
           >
             <Pencil size={15} />
             Editar

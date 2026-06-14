@@ -11,6 +11,7 @@ import {
   PRIORIDAD_COLOR,
 } from '@/lib/types/solicitudes'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
+import { Pencil, Trash2 } from 'lucide-react'
 
 export default function SolicitudDetallePage() {
   const params = useParams<{ id: string }>()
@@ -151,15 +152,17 @@ export default function SolicitudDetallePage() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowDeleteModal(true)}
-            className="text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
             style={{ border: '1px solid rgba(239,68,68,0.3)' }}
           >
+            <Trash2 size={15} />
             Eliminar
           </button>
           <Link
             href={`/solicitudes/${id}/editar`}
-            className="text-sm bg-amber-500 hover:bg-amber-400 text-gray-950 px-3 py-1.5 rounded-lg font-medium transition-colors"
+            className="flex items-center gap-1.5 text-sm border border-accent/40 text-accent hover:bg-accent/10 px-3 py-1.5 rounded-lg font-medium transition-colors"
           >
+            <Pencil size={15} />
             Editar
           </Link>
           <Link href="/solicitudes" className="text-sm hover:opacity-70 transition-opacity" style={ts}>
@@ -334,7 +337,7 @@ export default function SolicitudDetallePage() {
         <div className="flex gap-3">
           <Link
             href={`/solicitudes/${id}/cotizacion`}
-            className="flex-1 text-center bg-amber-500 hover:bg-amber-400 text-gray-950 rounded-lg py-2 text-sm font-medium transition-colors"
+            className="flex-1 text-center bg-action hover:bg-action-hover text-white rounded-lg py-2 text-sm font-medium transition-colors"
           >
             Crear cotización
           </Link>

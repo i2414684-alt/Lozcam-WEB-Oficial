@@ -29,7 +29,7 @@ export default async function SolicitudesPage() {
         </div>
         <Link
           href="/solicitudes/nueva"
-          className="bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+          className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
         >
           + Nueva solicitud
         </Link>
@@ -40,7 +40,7 @@ export default async function SolicitudesPage() {
           <p className="text-sm" style={ts}>No hay solicitudes registradas aún</p>
           <Link
             href="/solicitudes/nueva"
-            className="mt-4 inline-block bg-amber-500 hover:bg-amber-400 text-gray-950 px-4 py-2 rounded-lg text-sm font-medium"
+            className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium"
           >
             Registrar primera solicitud
           </Link>
