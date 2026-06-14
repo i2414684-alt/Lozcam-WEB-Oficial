@@ -8,6 +8,7 @@ import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_PAGO_COLOR, ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
 
 export default function PagoDetallePage() {
   const params = useParams<{ id: string }>()
@@ -18,9 +19,6 @@ export default function PagoDetallePage() {
 
   const [pago, setPago] = useState<any>(null)
   const [missing, setMissing] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     if (isNaN(id)) { setMissing(true); return }
@@ -43,9 +41,6 @@ export default function PagoDetallePage() {
   }, [id])
 
   async function handleDelete() {
-    setDeleting(true)
-    setDeleteError('')
-
     const { error } = await supabase
       .from('pagos_clientes')
       .delete()
@@ -54,14 +49,12 @@ export default function PagoDetallePage() {
     if (error) {
       console.error('Delete pago error:', error)
       if (error.code === '23503') {
-        setDeleteError('No se puede eliminar: este pago tiene un comprobante asociado. Elimina primero el comprobante.')
         toast.error('No se puede eliminar: este pago tiene un comprobante asociado.')
+        throw new Error('No se puede eliminar: este pago tiene un comprobante asociado. Elimina primero el comprobante.')
       } else {
         toast.error(error.message ?? 'No se pudo eliminar el pago')
-        setDeleteError(error.message)
+        throw new Error(error.message)
       }
-      setDeleting(false)
-      return
     }
 
     toast.success('Pago eliminado')
@@ -100,42 +93,6 @@ export default function PagoDetallePage() {
   return (
     <div className="max-w-2xl mx-auto">
 
-      {/* Modal de confirmación de eliminación */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => { if (!deleting) setShowDeleteModal(false) }}
-          />
-          <div className="relative z-10 rounded-xl p-6 w-full max-w-sm mx-4 shadow-xl bg-white dark:bg-gray-800" style={{ border: '1px solid var(--card-border)' }}>
-            <h2 className="text-base font-semibold mb-2" style={tp}>¿Eliminar este pago?</h2>
-            <p className="text-sm mb-5" style={ts}>
-              Esta acción no se puede deshacer.
-            </p>
-            {deleteError && (
-              <p className="text-red-500 text-sm mb-3">{deleteError}</p>
-            )}
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleting}
-                className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50"
-                style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
-              >
-                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -151,14 +108,20 @@ export default function PagoDetallePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
-            style={{ border: '1px solid rgba(239,68,68,0.3)' }}
-          >
-            <Trash2 size={15} />
-            Eliminar
-          </button>
+          <ConfirmarEliminar
+            trigger={
+              <button
+                className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                style={{ border: '1px solid rgba(239,68,68,0.3)' }}
+              >
+                <Trash2 size={15} />
+                Eliminar
+              </button>
+            }
+            titulo="¿Eliminar este pago?"
+            descripcion="Esta acción no se puede deshacer."
+            onConfirm={handleDelete}
+          />
           <Link
             href={`/pagos/${id}/editar`}
             className="flex items-center gap-1.5 text-sm border border-accent/40 text-accent hover:bg-accent/10 px-3 py-1.5 rounded-lg font-medium transition-colors"

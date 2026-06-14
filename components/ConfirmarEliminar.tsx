@@ -53,7 +53,7 @@ export function ConfirmarEliminar({
           <AlertDialogPrimitive.Backdrop className="fixed inset-0 z-50 bg-black/60" />
           <AlertDialogPrimitive.Popup
             className="fixed top-1/2 left-1/2 z-50 w-full max-w-sm -translate-x-1/2 -translate-y-1/2 rounded-xl p-6 shadow-xl outline-none"
-            style={{ background: 'var(--card-bg)', border: '1px solid var(--card-border)' }}
+            style={{ background: 'var(--popover)', border: '1px solid var(--card-border)' }}
           >
             <h2 className="text-base font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>
               {titulo}

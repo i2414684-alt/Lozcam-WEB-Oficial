@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
 
 const ROL_LABEL: Record<string, string> = {
   gerente_general:     'Gerente General',
@@ -34,9 +35,6 @@ export default function PersonalDetallePage() {
   const [asignaciones, setAsignaciones] = useState<any[]>([])
   const [currentUserId, setCurrentUserId] = useState<string | null>(null)
   const [missing, setMissing] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     if (!id) { setMissing(true); return }
@@ -66,9 +64,6 @@ export default function PersonalDetallePage() {
   async function handleDelete() {
     if (currentUserId === id) return
 
-    setDeleting(true)
-    setDeleteError('')
-
     const { error } = await supabase
       .from('profiles')
       .update({ activo: false })
@@ -76,9 +71,7 @@ export default function PersonalDetallePage() {
 
     if (error) {
       toast.error(error.message ?? 'No se pudo eliminar el miembro')
-      setDeleteError(error.message)
-      setDeleting(false)
-      return
+      throw new Error(error.message)
     }
 
     toast.success('Miembro eliminado')
@@ -116,42 +109,6 @@ export default function PersonalDetallePage() {
   return (
     <div className="max-w-2xl mx-auto">
 
-      {/* Modal de confirmación soft-delete */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => { if (!deleting) setShowDeleteModal(false) }}
-          />
-          <div className="relative z-10 rounded-xl p-6 w-full max-w-sm mx-4 shadow-xl bg-white dark:bg-gray-800" style={{ border: '1px solid var(--card-border)' }}>
-            <h2 className="text-base font-semibold mb-2" style={tp}>¿Eliminar este miembro del equipo?</h2>
-            <p className="text-sm mb-5" style={ts}>
-              Dejará de aparecer en los listados. Su historial de registros se conserva.
-            </p>
-            {deleteError && (
-              <p className="text-red-500 text-sm mb-3">{deleteError}</p>
-            )}
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleting}
-                className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50"
-                style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
-              >
-                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
@@ -166,14 +123,20 @@ export default function PersonalDetallePage() {
           {esPropioUsuario ? (
             <span className="text-xs" style={ts}>No puedes eliminar tu propio perfil</span>
           ) : (
-            <button
-              onClick={() => setShowDeleteModal(true)}
-              className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
-              style={{ border: '1px solid rgba(239,68,68,0.3)' }}
-            >
-              <Trash2 size={15} />
-              Eliminar
-            </button>
+            <ConfirmarEliminar
+              trigger={
+                <button
+                  className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                  style={{ border: '1px solid rgba(239,68,68,0.3)' }}
+                >
+                  <Trash2 size={15} />
+                  Eliminar
+                </button>
+              }
+              titulo="¿Eliminar este miembro del equipo?"
+              descripcion="Dejará de aparecer en los listados. (Su historial se conserva.)"
+              onConfirm={handleDelete}
+            />
           )}
           <Link
             href={`/personal/${id}/editar`}

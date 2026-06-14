@@ -13,6 +13,7 @@ import {
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
 
 export default function SolicitudDetallePage() {
   const params = useParams<{ id: string }>()
@@ -24,9 +25,6 @@ export default function SolicitudDetallePage() {
   const [sol, setSol] = useState<any>(null)
   const [citas, setCitas] = useState<any[]>([])
   const [missing, setMissing] = useState(false)
-  const [showDeleteModal, setShowDeleteModal] = useState(false)
-  const [deleting, setDeleting] = useState(false)
-  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     if (isNaN(id)) { setMissing(true); return }
@@ -50,9 +48,6 @@ export default function SolicitudDetallePage() {
   }, [id])
 
   async function handleDelete() {
-    setDeleting(true)
-    setDeleteError('')
-
     const { error } = await supabase
       .from('solicitudes')
       .delete()
@@ -60,9 +55,7 @@ export default function SolicitudDetallePage() {
 
     if (error) {
       toast.error(error.message ?? 'No se pudo eliminar la solicitud')
-      setDeleteError(error.message)
-      setDeleting(false)
-      return
+      throw new Error(error.message)
     }
 
     toast.success('Solicitud eliminada')
@@ -102,40 +95,6 @@ export default function SolicitudDetallePage() {
   return (
     <div className="max-w-3xl mx-auto">
 
-      {/* Modal de confirmación de eliminación */}
-      {showDeleteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div
-            className="absolute inset-0 bg-black/60"
-            onClick={() => { if (!deleting) setShowDeleteModal(false) }}
-          />
-          <div className="relative z-10 rounded-xl p-6 w-full max-w-sm mx-4 shadow-xl bg-white dark:bg-gray-800" style={{ border: '1px solid var(--card-border)' }}>
-            <h2 className="text-base font-semibold mb-2" style={tp}>¿Eliminar esta solicitud?</h2>
-            <p className="text-sm mb-5" style={ts}>
-              Esta acción no se puede deshacer y también eliminará sus citas asociadas.
-            </p>
-            {deleteError && <p className="text-red-500 text-sm mb-3">{deleteError}</p>}
-            <div className="flex gap-3">
-              <button
-                onClick={() => setShowDeleteModal(false)}
-                disabled={deleting}
-                className="flex-1 rounded-lg py-2 text-sm font-medium transition-colors hover:bg-black/5 dark:hover:bg-white/5 disabled:opacity-50"
-                style={{ border: '1px solid var(--card-border)', color: 'var(--text-primary)' }}
-              >
-                Cancelar
-              </button>
-              <button
-                onClick={handleDelete}
-                disabled={deleting}
-                className="flex-1 bg-red-600 hover:bg-red-700 text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
-              >
-                {deleting ? 'Eliminando...' : 'Sí, eliminar'}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Header */}
       <div className="flex items-start justify-between mb-6">
         <div>
@@ -153,14 +112,20 @@ export default function SolicitudDetallePage() {
           </p>
         </div>
         <div className="flex items-center gap-3">
-          <button
-            onClick={() => setShowDeleteModal(true)}
-            className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
-            style={{ border: '1px solid rgba(239,68,68,0.3)' }}
-          >
-            <Trash2 size={15} />
-            Eliminar
-          </button>
+          <ConfirmarEliminar
+            trigger={
+              <button
+                className="flex items-center gap-1.5 text-sm text-red-500 hover:text-red-400 px-3 py-1.5 rounded-lg font-medium transition-colors"
+                style={{ border: '1px solid rgba(239,68,68,0.3)' }}
+              >
+                <Trash2 size={15} />
+                Eliminar
+              </button>
+            }
+            titulo="¿Eliminar esta solicitud?"
+            descripcion="Esta acción no se puede deshacer y también eliminará sus citas asociadas."
+            onConfirm={handleDelete}
+          />
           <Link
             href={`/solicitudes/${id}/editar`}
             className="flex items-center gap-1.5 text-sm border border-accent/40 text-accent hover:bg-accent/10 px-3 py-1.5 rounded-lg font-medium transition-colors"
