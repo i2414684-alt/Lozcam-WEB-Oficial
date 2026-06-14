@@ -3,18 +3,17 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NuevoClientePage() {
   const router = useRouter()
   const supabase = createClient()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const [tipo, setTipo] = useState<'natural' | 'juridica'>('natural')
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setLoading(true)
-    setError('')
 
     const form = e.currentTarget
     const data = new FormData(form)
@@ -38,14 +37,15 @@ export default function NuevoClientePage() {
       notas: (data.get('notas') as string) || null,
     }
 
-    const { error } = await supabase.from('clientes').insert(payload)
+    const { error: sbError } = await supabase.from('clientes').insert(payload)
 
-    if (error) {
-      setError('Error al guardar el cliente. Intenta nuevamente.')
+    if (sbError) {
+      toast.error(sbError.message ?? 'No se pudo crear el cliente')
       setLoading(false)
       return
     }
 
+    toast.success('Cliente creado correctamente')
     router.push('/clientes')
     router.refresh()
   }
@@ -234,8 +234,6 @@ export default function NuevoClientePage() {
             style={inputStyle}
           />
         </div>
-
-        {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <div className="flex gap-3 pt-2">
           <button

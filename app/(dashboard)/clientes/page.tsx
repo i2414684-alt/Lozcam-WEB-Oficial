@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
 import { FilaTabla } from './TablaHover'
 import { AccionesFila } from '@/components/shared/AccionesFila'
+import { toast } from 'sonner'
 
 export default function ClientesPage() {
   const supabase = createClient()

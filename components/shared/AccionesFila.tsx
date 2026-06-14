@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Eye, Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 interface Props {
   id: number | string
@@ -31,9 +32,11 @@ export function AccionesFila({
     setError('')
     try {
       await onEliminar(id)
+      toast.success('Registro eliminado')
       setShowModal(false)
     } catch (e: any) {
-      setError(e?.message ?? 'Error al eliminar')
+      toast.error(e?.message ?? 'No se pudo eliminar')
+      setError(e?.message ?? 'No se pudo eliminar')
       setLoading(false)
     }
   }

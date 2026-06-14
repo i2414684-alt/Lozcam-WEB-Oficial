@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function ClienteDetallePage() {
   const params = useParams<{ id: string }>()
@@ -44,11 +45,13 @@ export default function ClienteDetallePage() {
       .eq('id', id)
 
     if (error) {
+      toast.error(error.message ?? 'No se pudo eliminar el cliente')
       setDeleteError(error.message)
       setDeleting(false)
       return
     }
 
+    toast.success('Cliente eliminado')
     router.push('/clientes')
     router.refresh()
   }
