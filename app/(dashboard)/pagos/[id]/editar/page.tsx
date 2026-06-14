@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { METODO_PAGO_LABEL, ESTADO_PAGO_LABEL } from '@/lib/types/pagos'
+import { toast } from 'sonner'
 
 export default function EditarPagoPage() {
   const router = useRouter()
@@ -102,9 +103,11 @@ export default function EditarPagoPage() {
 
       if (updateError) throw updateError
 
+      toast.success('Cambios guardados')
       router.push(`/pagos/${id}`)
       router.refresh()
     } catch (err: any) {
+      toast.error(err?.message ?? 'Error al actualizar el pago')
       setError(err?.message ?? 'Error al actualizar el pago')
       setSaving(false)
     }

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_OBRA_COLOR, ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function ObraDetallePage() {
   const params = useParams<{ id: string }>()
@@ -53,11 +54,13 @@ export default function ObraDetallePage() {
       .eq('id', id)
 
     if (error) {
+      toast.error(error.message ?? 'No se pudo eliminar la obra')
       setDeleteError(error.message)
       setDeleting(false)
       return
     }
 
+    toast.success('Obra eliminada')
     router.push('/obras')
     router.refresh()
   }

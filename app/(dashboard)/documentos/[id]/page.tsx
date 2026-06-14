@@ -11,6 +11,7 @@ import {
   ESTADO_DOCUMENTO_LABEL,
 } from '@/lib/types/documentos'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function DocumentoDetallePage() {
   const params = useParams<{ id: string }>()
@@ -57,11 +58,13 @@ export default function DocumentoDetallePage() {
       .eq('id', id)
 
     if (error) {
+      toast.error(error.message ?? 'No se pudo eliminar el documento')
       setDeleteError(error.message)
       setDeleting(false)
       return
     }
 
+    toast.success('Documento eliminado')
     router.push('/documentos')
     router.refresh()
   }

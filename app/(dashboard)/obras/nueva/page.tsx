@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_SERVICIO_LABEL, ESTADO_OBRA_LABEL } from '@/lib/utils/constants'
+import { toast } from 'sonner'
 
 export default function NuevaObraPage() {
   const router = useRouter()
@@ -46,14 +47,16 @@ export default function NuevaObraPage() {
       notas: (data.get('notas') as string) || null,
     }
 
-    const { error } = await supabase.from('obras').insert(payload)
+    const { error: sbError } = await supabase.from('obras').insert(payload)
 
-    if (error) {
-      setError('Error al guardar la obra. Intenta nuevamente.')
+    if (sbError) {
+      toast.error(sbError.message ?? 'Error al guardar la obra')
+      setError(sbError.message ?? 'Error al guardar la obra')
       setLoading(false)
       return
     }
 
+    toast.success('Obra creada')
     router.push('/obras')
     router.refresh()
   }

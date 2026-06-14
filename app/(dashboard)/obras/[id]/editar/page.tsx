@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_SERVICIO_LABEL, ESTADO_OBRA_LABEL } from '@/lib/utils/constants'
+import { toast } from 'sonner'
 
 export default function EditarObraPage() {
   const router = useRouter()
@@ -56,14 +57,16 @@ export default function EditarObraPage() {
       updated_at: new Date().toISOString(),
     }
 
-    const { error } = await supabase.from('obras').update(payload).eq('id', id)
+    const { error: sbError } = await supabase.from('obras').update(payload).eq('id', id)
 
-    if (error) {
-      setError('Error al actualizar la obra.')
+    if (sbError) {
+      toast.error(sbError.message ?? 'Error al actualizar la obra')
+      setError(sbError.message ?? 'Error al actualizar la obra')
       setSaving(false)
       return
     }
 
+    toast.success('Cambios guardados')
     router.push(`/obras/${id}`)
     router.refresh()
   }

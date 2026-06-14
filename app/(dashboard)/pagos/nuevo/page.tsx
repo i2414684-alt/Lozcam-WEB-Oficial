@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { METODO_PAGO_LABEL } from '@/lib/types/pagos'
+import { toast } from 'sonner'
 
 export default function NuevoPagoPage() {
   const router = useRouter()
@@ -76,9 +77,11 @@ export default function NuevoPagoPage() {
 
       if (pagoError) throw pagoError
 
+      toast.success('Pago registrado')
       router.push('/pagos')
       router.refresh()
     } catch (err: any) {
+      toast.error(err?.message ?? 'Error al registrar el pago')
       setError(err?.message ?? 'Error al registrar el pago')
     } finally {
       setLoading(false)

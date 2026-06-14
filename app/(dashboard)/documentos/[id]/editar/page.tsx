@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_DOCUMENTO_LABEL, ESTADO_DOCUMENTO_LABEL } from '@/lib/types/documentos'
+import { toast } from 'sonner'
 
 export default function EditarDocumentoPage() {
   const router = useRouter()
@@ -49,11 +50,13 @@ export default function EditarDocumentoPage() {
       .eq('id', id)
 
     if (updateError) {
-      setError('Error al actualizar el documento.')
+      toast.error(updateError.message ?? 'Error al actualizar el documento')
+      setError(updateError.message ?? 'Error al actualizar el documento')
       setSaving(false)
       return
     }
 
+    toast.success('Cambios guardados')
     router.push(`/documentos/${id}`)
     router.refresh()
   }

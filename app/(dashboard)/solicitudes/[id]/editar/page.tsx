@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { ESTADO_SOLICITUD_LABEL } from '@/lib/types/solicitudes'
+import { toast } from 'sonner'
 
 export default function EditarSolicitudPage() {
   const router = useRouter()
@@ -54,14 +55,16 @@ export default function EditarSolicitudPage() {
       updated_at: new Date().toISOString(),
     }
 
-    const { error } = await supabase.from('solicitudes').update(payload).eq('id', id)
+    const { error: sbError } = await supabase.from('solicitudes').update(payload).eq('id', id)
 
-    if (error) {
-      setError('Error al actualizar la solicitud.')
+    if (sbError) {
+      toast.error(sbError.message ?? 'Error al actualizar la solicitud')
+      setError(sbError.message ?? 'Error al actualizar la solicitud')
       setSaving(false)
       return
     }
 
+    toast.success('Cambios guardados')
     router.push(`/solicitudes/${id}`)
     router.refresh()
   }

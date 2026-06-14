@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_DOCUMENTO_LABEL } from '@/lib/types/documentos'
+import { toast } from 'sonner'
 
 export default function NuevoDocumentoPage() {
   const router = useRouter()
@@ -82,10 +83,11 @@ export default function NuevoDocumentoPage() {
         subido_por: userId,
       })
 
+      toast.success('Documento creado')
       router.push('/documentos')
       router.refresh()
     } catch (err: any) {
-      console.error('ERROR DETALLE:', JSON.stringify(err))
+      toast.error(err?.message ?? 'Error al subir el documento')
       setError(err?.message ?? 'Error al subir el documento')
       setLoading(false)
     }

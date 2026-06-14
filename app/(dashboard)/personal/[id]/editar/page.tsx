@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 const ROLES = [
   { value: 'gerente_general',     label: 'Gerente General' },
@@ -60,11 +61,13 @@ export default function EditarPersonalPage() {
       .eq('id', id)
 
     if (updateError) {
-      setError('Error al actualizar el perfil.')
+      toast.error(updateError.message ?? 'Error al actualizar el perfil')
+      setError(updateError.message ?? 'Error al actualizar el perfil')
       setSaving(false)
       return
     }
 
+    toast.success('Cambios guardados')
     router.push(`/personal/${id}`)
     router.refresh()
   }

@@ -11,6 +11,7 @@ interface Props {
   onEliminar: (id: number | string) => Promise<void>
   tituloModal?: string
   descripcionModal?: string
+  mensajeExito?: string
 }
 
 export function AccionesFila({
@@ -19,6 +20,7 @@ export function AccionesFila({
   onEliminar,
   tituloModal = '¿Eliminar este registro?',
   descripcionModal = 'Esta acción no se puede deshacer.',
+  mensajeExito = 'Registro eliminado',
 }: Props) {
   const [showModal, setShowModal] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -32,7 +34,7 @@ export function AccionesFila({
     setError('')
     try {
       await onEliminar(id)
-      toast.success('Registro eliminado')
+      toast.success(mensajeExito)
       setShowModal(false)
     } catch (e: any) {
       toast.error(e?.message ?? 'No se pudo eliminar')

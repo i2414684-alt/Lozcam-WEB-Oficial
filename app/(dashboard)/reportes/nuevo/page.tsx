@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 interface Material {
   material: string
@@ -92,9 +93,11 @@ export default function NuevoReportePage() {
         }
       }
 
+      toast.success('Reporte creado')
       router.push(`/reportes/${reporte.id}`)
       router.refresh()
     } catch (err: any) {
+      toast.error('No se pudo crear el reporte')
       setError(err.message ?? 'Error al guardar el reporte')
       setLoading(false)
     }

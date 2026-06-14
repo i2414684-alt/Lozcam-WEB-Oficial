@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 const ROLES = [
   { value: 'gerente_general',     label: 'Gerente General' },
@@ -47,6 +48,7 @@ export default function NuevoUsuarioPage() {
     })
 
     if (authError) {
+      toast.error(authError.message ?? 'No se pudo crear el usuario')
       setError(authError.message)
       setLoading(false)
       return
@@ -63,6 +65,7 @@ export default function NuevoUsuarioPage() {
       })
     }
 
+    toast.success('Usuario creado')
     router.push('/personal')
     router.refresh()
   }

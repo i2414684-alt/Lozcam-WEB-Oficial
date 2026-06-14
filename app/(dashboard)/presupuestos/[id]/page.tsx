@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_PRESUPUESTO_COLOR, TIPO_COSTO_LABEL } from '@/lib/types/presupuestos'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function PresupuestoDetallePage() {
   const params = useParams<{ id: string }>()
@@ -53,11 +54,13 @@ export default function PresupuestoDetallePage() {
       .eq('id', id)
 
     if (error) {
+      toast.error(error.message ?? 'No se pudo eliminar el presupuesto')
       setDeleteError(error.message)
       setDeleting(false)
       return
     }
 
+    toast.success('Presupuesto eliminado')
     router.push('/presupuestos')
     router.refresh()
   }

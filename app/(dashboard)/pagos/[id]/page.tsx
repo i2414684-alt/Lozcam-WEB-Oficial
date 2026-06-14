@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_PAGO_COLOR, ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function PagoDetallePage() {
   const params = useParams<{ id: string }>()
@@ -54,13 +55,16 @@ export default function PagoDetallePage() {
       console.error('Delete pago error:', error)
       if (error.code === '23503') {
         setDeleteError('No se puede eliminar: este pago tiene un comprobante asociado. Elimina primero el comprobante.')
+        toast.error('No se puede eliminar: este pago tiene un comprobante asociado.')
       } else {
+        toast.error(error.message ?? 'No se pudo eliminar el pago')
         setDeleteError(error.message)
       }
       setDeleting(false)
       return
     }
 
+    toast.success('Pago eliminado')
     router.push('/pagos')
     router.refresh()
   }

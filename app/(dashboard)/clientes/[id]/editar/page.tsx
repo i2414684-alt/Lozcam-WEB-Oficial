@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function EditarClientePage() {
   const router = useRouter()
@@ -56,17 +57,19 @@ export default function EditarClientePage() {
       updated_at: new Date().toISOString(),
     }
 
-    const { error } = await supabase
+    const { error: sbError } = await supabase
       .from('clientes')
       .update(payload)
       .eq('id', id)
 
-    if (error) {
+    if (sbError) {
+      toast.error('No se pudo guardar')
       setError('Error al actualizar el cliente.')
       setSaving(false)
       return
     }
 
+    toast.success('Cambios guardados')
     router.push(`/clientes/${id}`)
     router.refresh()
   }

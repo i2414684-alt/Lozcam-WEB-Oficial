@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 const ROL_LABEL: Record<string, string> = {
   gerente_general:     'Gerente General',
@@ -74,11 +75,13 @@ export default function PersonalDetallePage() {
       .eq('id', id)
 
     if (error) {
+      toast.error(error.message ?? 'No se pudo eliminar el miembro')
       setDeleteError(error.message)
       setDeleting(false)
       return
     }
 
+    toast.success('Miembro eliminado')
     router.push('/personal')
     router.refresh()
   }

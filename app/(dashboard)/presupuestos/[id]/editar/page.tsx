@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_COSTO_LABEL } from '@/lib/types/presupuestos'
+import { toast } from 'sonner'
 
 interface Partida {
   codigo: string
@@ -142,10 +143,12 @@ export default function EditarPresupuestoPage() {
         await supabase.from('partidas').insert(partidasData)
       }
 
+      toast.success('Cambios guardados')
       router.push(`/presupuestos/${id}`)
       router.refresh()
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
+      toast.error(message ?? 'Error al guardar')
       setError(message ?? 'Error al guardar')
       setSaving(false)
     }

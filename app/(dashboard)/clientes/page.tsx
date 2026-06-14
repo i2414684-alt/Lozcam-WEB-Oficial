@@ -112,6 +112,7 @@ export default function ClientesPage() {
                       onEliminar={handleEliminar}
                       tituloModal="¿Eliminar este cliente?"
                       descripcionModal="Dejará de aparecer en los listados. (No se elimina su historial.)"
+                      mensajeExito="Cliente eliminado"
                     />
                   </td>
                 </FilaTabla>

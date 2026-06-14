@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
+import { toast } from 'sonner'
 
 export default function NuevaIncidenciaPage() {
   const router = useRouter()
@@ -47,11 +48,13 @@ export default function NuevaIncidenciaPage() {
     })
 
     if (incError) {
+      toast.error('No se pudo registrar la incidencia')
       setError('Error al registrar la incidencia.')
       setLoading(false)
       return
     }
 
+    toast.success('Incidencia registrada')
     router.push(`/reportes/${reporteId}`)
     router.refresh()
   }

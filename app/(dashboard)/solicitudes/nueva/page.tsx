@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
+import { toast } from 'sonner'
 
 export default function NuevaSolicitudPage() {
   const router = useRouter()
@@ -60,18 +61,19 @@ export default function NuevaSolicitudPage() {
       })
 
       const result = await response.json()
-      console.log('RESULTADO:', result)
 
       if (!response.ok) {
+        toast.error(result.error ?? 'Error al guardar')
         setError(result.error ?? 'Error al guardar')
         setLoading(false)
         return
       }
 
+      toast.success('Solicitud creada')
       router.push('/solicitudes')
       router.refresh()
     } catch (err: any) {
-      console.error('ERROR:', err)
+      toast.error(err.message ?? 'Error inesperado')
       setError(err.message ?? 'Error inesperado')
       setLoading(false)
     }

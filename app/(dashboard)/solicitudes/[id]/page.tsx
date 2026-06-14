@@ -12,6 +12,7 @@ import {
 } from '@/lib/types/solicitudes'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { Pencil, Trash2 } from 'lucide-react'
+import { toast } from 'sonner'
 
 export default function SolicitudDetallePage() {
   const params = useParams<{ id: string }>()
@@ -58,11 +59,13 @@ export default function SolicitudDetallePage() {
       .eq('id', id)
 
     if (error) {
+      toast.error(error.message ?? 'No se pudo eliminar la solicitud')
       setDeleteError(error.message)
       setDeleting(false)
       return
     }
 
+    toast.success('Solicitud eliminada')
     router.push('/solicitudes')
     router.refresh()
   }
