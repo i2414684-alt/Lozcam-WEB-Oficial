@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatFecha } from '@/lib/utils/formatters'
 
-import { ESTADO_SOLICITUD_COLOR, ESTADO_SOLICITUD_LABEL, PRIORIDAD_COLOR } from '@/lib/types/solicitudes'
+import { ESTADO_SOLICITUD_LABEL } from '@/lib/types/solicitudes'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { FilaTabla } from '@/components/shared/FilaTabla'
 
@@ -79,15 +80,10 @@ export default async function SolicitudesPage() {
                     {TIPO_SERVICIO_LABEL[s.tipo_servicio] ?? s.tipo_servicio}
                   </td>
                   <td className="px-4 py-3" style={{ borderTop: '1px solid var(--table-border)' }}>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_SOLICITUD_COLOR[s.estado]}`}>
-                      {ESTADO_SOLICITUD_LABEL[s.estado]}
-                    </span>
+                    <EstadoBadge estado={s.estado} label={ESTADO_SOLICITUD_LABEL[s.estado]} />
                   </td>
                   <td className="px-4 py-3" style={{ borderTop: '1px solid var(--table-border)' }}>
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${PRIORIDAD_COLOR[s.prioridad]}`}>
-
-                      {s.prioridad.charAt(0).toUpperCase() + s.prioridad.slice(1)}
-                    </span>
+                    <EstadoBadge estado={s.prioridad} />
                   </td>
                   <td className="px-4 py-3 text-xs" style={{ borderTop: '1px solid var(--table-border)', ...ts }}>
                     {formatFecha(s.created_at)}

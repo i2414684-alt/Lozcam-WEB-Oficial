@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
@@ -192,15 +193,7 @@ export default function PersonalDetallePage() {
           </div>
           <div>
             <p className="text-xs mb-0.5" style={ts}>Estado</p>
-            <span
-              className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                perfil.activo
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              {perfil.activo ? 'Activo' : 'Inactivo'}
-            </span>
+            <EstadoBadge estado={perfil.activo ? 'activo' : 'inactivo'} />
           </div>
           <div>
             <p className="text-xs mb-0.5" style={ts}>Fecha de ingreso</p>

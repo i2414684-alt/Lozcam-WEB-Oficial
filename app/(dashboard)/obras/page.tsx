@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
-import { ESTADO_OBRA_COLOR, ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
+import { ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
+import { EstadoBadge } from '@/components/EstadoBadge'
 
 export default async function ObrasPage() {
   const supabase = await createClient()
@@ -60,9 +61,7 @@ export default async function ObrasPage() {
                     {obra.codigo && (
                       <span className="text-xs font-mono" style={ts}>{obra.codigo}</span>
                     )}
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_OBRA_COLOR[obra.estado]}`}>
-                      {ESTADO_OBRA_LABEL[obra.estado]}
-                    </span>
+                    <EstadoBadge estado={obra.estado} label={ESTADO_OBRA_LABEL[obra.estado]} />
                   </div>
                   <p className="text-sm mb-3" style={{ color: 'var(--text-secondary)' }}>
                     {TIPO_SERVICIO_LABEL[obra.tipo_servicio]} · {obra.direccion}

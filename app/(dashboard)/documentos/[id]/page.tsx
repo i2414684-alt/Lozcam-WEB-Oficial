@@ -7,9 +7,9 @@ import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatFechaHora } from '@/lib/utils/formatters'
 import {
   TIPO_DOCUMENTO_LABEL,
-  ESTADO_DOCUMENTO_COLOR,
   ESTADO_DOCUMENTO_LABEL,
 } from '@/lib/types/documentos'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
@@ -94,9 +94,7 @@ export default function DocumentoDetallePage() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold" style={tp}>{doc.titulo}</h1>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${ESTADO_DOCUMENTO_COLOR[doc.estado]}`}>
-              {ESTADO_DOCUMENTO_LABEL[doc.estado]}
-            </span>
+            <EstadoBadge estado={doc.estado} label={ESTADO_DOCUMENTO_LABEL[doc.estado]} />
           </div>
           <p className="text-sm" style={ts}>
             {TIPO_DOCUMENTO_LABEL[doc.tipo]} · v{doc.version_actual}

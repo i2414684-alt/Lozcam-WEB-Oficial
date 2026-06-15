@@ -5,6 +5,7 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha } from '@/lib/utils/formatters'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
@@ -220,15 +221,7 @@ export default function ClienteDetallePage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <p className="text-xs" style={ts}>Estado:</p>
-            <span
-              className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                cliente.activo
-                  ? 'bg-green-100 text-green-700'
-                  : 'bg-gray-100 text-gray-600'
-              }`}
-            >
-              {cliente.activo ? 'Activo' : 'Inactivo'}
-            </span>
+            <EstadoBadge estado={cliente.activo ? 'activo' : 'inactivo'} />
           </div>
           <p className="text-xs" style={ts}>
             Registrado el {formatFecha(cliente.created_at)}

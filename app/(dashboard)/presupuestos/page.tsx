@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
-import { ESTADO_PRESUPUESTO_COLOR } from '@/lib/types/presupuestos'
 import { FilaTabla } from '@/components/shared/FilaTabla'
+import { EstadoBadge } from '@/components/EstadoBadge'
 
 export default async function PresupuestosPage() {
   const supabase = await createClient()
@@ -59,13 +59,11 @@ export default async function PresupuestosPage() {
                   <td className="px-4 py-3 text-sm" style={ts}>{p.obras?.nombre ?? '—'}</td>
                   <td className="px-4 py-3 font-semibold" style={tp}>{formatPEN(p.total)}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_PRESUPUESTO_COLOR[p.estado] ?? 'bg-gray-100 text-gray-700'}`}>
-                      {p.estado.charAt(0).toUpperCase() + p.estado.slice(1)}
-                    </span>
+                    <EstadoBadge estado={p.estado} />
                   </td>
                   <td className="px-4 py-3">
                     {p.es_vigente
-                      ? <span className="text-xs px-2 py-0.5 rounded-full bg-green-500/20 text-green-500 font-medium">Vigente</span>
+                      ? <EstadoBadge estado="vigente" />
                       : <span className="text-xs" style={ts}>—</span>
                     }
                   </td>

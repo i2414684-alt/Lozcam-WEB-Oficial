@@ -5,7 +5,8 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
-import { ESTADO_PRESUPUESTO_COLOR, TIPO_COSTO_LABEL } from '@/lib/types/presupuestos'
+import { TIPO_COSTO_LABEL } from '@/lib/types/presupuestos'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
@@ -87,16 +88,8 @@ export default function PresupuestoDetallePage() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold" style={tp}>{pres.nombre}</h1>
-            <span
-              className={`text-xs px-2 py-1 rounded-full font-medium ${
-                ESTADO_PRESUPUESTO_COLOR[pres.estado] ?? 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              {pres.estado.charAt(0).toUpperCase() + pres.estado.slice(1)}
-            </span>
-            {pres.es_vigente && (
-              <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-700 font-medium">Vigente</span>
-            )}
+            <EstadoBadge estado={pres.estado} />
+            {pres.es_vigente && <EstadoBadge estado="vigente" />}
           </div>
           <p className="text-sm" style={ts}>
             {pres.obras?.nombre} · {formatFecha(pres.created_at)}

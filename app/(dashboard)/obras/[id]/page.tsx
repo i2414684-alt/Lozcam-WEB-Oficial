@@ -5,7 +5,8 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
-import { ESTADO_OBRA_COLOR, ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
+import { ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
@@ -95,9 +96,7 @@ export default function ObraDetallePage() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold" style={tp}>{obra.nombre}</h1>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${ESTADO_OBRA_COLOR[obra.estado]}`}>
-              {ESTADO_OBRA_LABEL[obra.estado]}
-            </span>
+            <EstadoBadge estado={obra.estado} label={ESTADO_OBRA_LABEL[obra.estado]} />
           </div>
           <p className="text-sm" style={ts}>
             {TIPO_SERVICIO_LABEL[obra.tipo_servicio]}
@@ -281,25 +280,7 @@ export default function ObraDetallePage() {
                   )}
                 </div>
                 <div className="text-right">
-                  <span
-                    className={`text-xs px-2 py-0.5 rounded-full ${
-                      fase.estado === 'completada'
-                        ? 'bg-green-100 text-green-700'
-                        : fase.estado === 'en_progreso'
-                          ? 'bg-blue-100 text-blue-700'
-                          : fase.estado === 'bloqueada'
-                            ? 'bg-red-100 text-red-700'
-                            : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {fase.estado === 'completada'
-                      ? 'Completada'
-                      : fase.estado === 'en_progreso'
-                        ? 'En progreso'
-                        : fase.estado === 'bloqueada'
-                          ? 'Bloqueada'
-                          : 'Pendiente'}
-                  </span>
+                  <EstadoBadge estado={fase.estado} />
                 </div>
               </div>
             ))}

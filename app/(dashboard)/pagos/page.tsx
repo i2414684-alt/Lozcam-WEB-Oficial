@@ -1,7 +1,8 @@
 ﻿import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
-import { ESTADO_PAGO_COLOR, ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
+import { ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { FilaTabla } from '@/components/shared/FilaTabla'
 
 export default async function PagosPage() {
@@ -82,9 +83,7 @@ export default async function PagosPage() {
                   <td className="px-4 py-3 font-semibold" style={tp}>{formatPEN(Number(p.monto))}</td>
                   <td className="px-4 py-3 text-xs" style={ts}>{METODO_PAGO_LABEL[p.metodo_pago] ?? p.metodo_pago}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_PAGO_COLOR[p.estado]}`}>
-                      {ESTADO_PAGO_LABEL[p.estado]}
-                    </span>
+                    <EstadoBadge estado={p.estado} label={ESTADO_PAGO_LABEL[p.estado]} />
                   </td>
                   <td className="px-4 py-3 text-xs" style={ts}>{formatFecha(p.fecha_pago)}</td>
                   <td className="px-4 py-3">

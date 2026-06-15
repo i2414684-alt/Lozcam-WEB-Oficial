@@ -6,10 +6,9 @@ import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import {
-  ESTADO_SOLICITUD_COLOR,
   ESTADO_SOLICITUD_LABEL,
-  PRIORIDAD_COLOR,
 } from '@/lib/types/solicitudes'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -100,12 +99,8 @@ export default function SolicitudDetallePage() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold" style={tp}>{sol.titulo}</h1>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${ESTADO_SOLICITUD_COLOR[sol.estado]}`}>
-              {ESTADO_SOLICITUD_LABEL[sol.estado]}
-            </span>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${PRIORIDAD_COLOR[sol.prioridad]}`}>
-              {sol.prioridad.charAt(0).toUpperCase() + sol.prioridad.slice(1)}
-            </span>
+            <EstadoBadge estado={sol.estado} label={ESTADO_SOLICITUD_LABEL[sol.estado]} />
+            <EstadoBadge estado={sol.prioridad} />
           </div>
           <p className="text-sm" style={ts}>
             {TIPO_SERVICIO_LABEL[sol.tipo_servicio]} · {formatFecha(sol.created_at)}
@@ -282,17 +277,7 @@ export default function SolicitudDetallePage() {
                     {c.tipo_cita} · {c.estado}
                   </p>
                 </div>
-                <span
-                  className={`text-xs px-2 py-0.5 rounded-full ${
-                    c.estado === 'completada'
-                      ? 'bg-green-100 text-green-700'
-                      : c.estado === 'cancelada'
-                        ? 'bg-red-100 text-red-700'
-                        : 'bg-blue-100 text-blue-700'
-                  }`}
-                >
-                  {c.estado.charAt(0).toUpperCase() + c.estado.slice(1)}
-                </span>
+                <EstadoBadge estado={c.estado} />
               </div>
             ))}
           </div>

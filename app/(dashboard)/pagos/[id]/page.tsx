@@ -5,7 +5,8 @@ import { useRouter, useParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
-import { ESTADO_PAGO_COLOR, ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
+import { ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
+import { EstadoBadge } from '@/components/EstadoBadge'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { ConfirmarEliminar } from '@/components/ConfirmarEliminar'
@@ -98,9 +99,7 @@ export default function PagoDetallePage() {
         <div>
           <div className="flex items-center gap-3 mb-1">
             <h1 className="text-2xl font-bold" style={tp}>{pago.concepto}</h1>
-            <span className={`text-xs px-2 py-1 rounded-full font-medium ${ESTADO_PAGO_COLOR[pago.estado]}`}>
-              {ESTADO_PAGO_LABEL[pago.estado]}
-            </span>
+            <EstadoBadge estado={pago.estado} label={ESTADO_PAGO_LABEL[pago.estado]} />
           </div>
           <p className="text-sm" style={ts}>
             {(pago.obras as any)?.nombre ?? '—'}

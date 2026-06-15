@@ -1,7 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatFecha } from '@/lib/utils/formatters'
-import { TIPO_DOCUMENTO_LABEL, ESTADO_DOCUMENTO_COLOR, ESTADO_DOCUMENTO_LABEL } from '@/lib/types/documentos'
+import { TIPO_DOCUMENTO_LABEL, ESTADO_DOCUMENTO_LABEL } from '@/lib/types/documentos'
+import { EstadoBadge } from '@/components/EstadoBadge'
 
 export default async function DocumentosPage() {
   const supabase = await createClient()
@@ -62,9 +63,7 @@ export default async function DocumentosPage() {
                   <td className="px-4 py-3 text-xs" style={ts}>{TIPO_DOCUMENTO_LABEL[doc.tipo] ?? doc.tipo}</td>
                   <td className="px-4 py-3 text-xs" style={ts}>{doc.obras?.nombre ?? '—'}</td>
                   <td className="px-4 py-3">
-                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${ESTADO_DOCUMENTO_COLOR[doc.estado]}`}>
-                      {ESTADO_DOCUMENTO_LABEL[doc.estado]}
-                    </span>
+                    <EstadoBadge estado={doc.estado} label={ESTADO_DOCUMENTO_LABEL[doc.estado]} />
                   </td>
                   <td className="px-4 py-3 text-center text-sm" style={ts}>v{doc.version_actual}</td>
                   <td className="px-4 py-3 text-xs" style={ts}>{formatFecha(doc.created_at)}</td>
