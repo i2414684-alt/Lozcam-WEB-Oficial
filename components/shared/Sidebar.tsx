@@ -1,14 +1,15 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { cn } from '@/lib/utils/formatters'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useSidebar } from '@/contexts/SidebarContext'
 import {
   Building2, Users, FileText, FolderOpen, Calculator,
   CreditCard, UserCheck, ClipboardList, LayoutDashboard,
-  HardHat, Menu,
 } from 'lucide-react'
 
 interface NavItem {
@@ -102,7 +103,7 @@ const navSections: NavSection[] = [
 
 export default function Sidebar({ rol }: { rol: string }) {
   const pathname = usePathname()
-  const [colapsado, setColapsado] = useState(true)
+  const { colapsado } = useSidebar()
   const [hovered, setHovered] = useState(false)
   const expandido = !colapsado || hovered
   const { isDark } = useTheme()
@@ -118,9 +119,6 @@ export default function Sidebar({ rol }: { rol: string }) {
   const itemNormal = isDark
     ? 'text-gray-400 hover:bg-gray-800 hover:text-white'
     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-  const menuBtnColor = isDark
-    ? 'text-gray-400 hover:text-white'
-    : 'text-gray-500 hover:text-gray-900'
   const headerBorder = isDark ? 'border-gray-800' : 'border-gray-200'
 
   return (
@@ -130,32 +128,32 @@ export default function Sidebar({ rol }: { rol: string }) {
       expandido ? 'w-64' : 'w-16'
     )}>
       <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      className="contents"
-    />
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        className="contents"
+      />
 
-      {/* Header */}
-      <div className={cn('flex items-center border-b h-16 px-3 gap-2 shrink-0', headerBorder)}>
-        <button
-          onClick={() => setColapsado(!colapsado)}
-          className={cn('shrink-0 p-1.5 rounded-lg transition-colors', menuBtnColor)}
-        >
-          <Menu size={18} />
-        </button>
+      {/* Header — logo mark siempre visible, texto completo cuando expandido */}
+      <div className={cn(
+        'flex items-center border-b h-16 shrink-0 transition-all duration-300',
+        expandido ? 'px-4 gap-2' : 'justify-center',
+        headerBorder
+      )}>
+        <Image
+          src="/logo-lozcam.png.png"
+          alt="Grupo LOZCAM"
+          width={36}
+          height={36}
+          className="rounded-lg shrink-0"
+        />
         <div className={cn(
-          'flex items-center gap-2 min-w-0 transition-all duration-300',
+          'min-w-0 transition-all duration-300',
           expandido ? 'opacity-100 w-auto' : 'opacity-0 w-0 overflow-hidden'
         )}>
-          <div className="w-7 h-7 bg-amber-500 rounded-lg flex items-center justify-center shrink-0">
-            <HardHat size={14} className="text-gray-950" />
-          </div>
-          <div className="min-w-0">
-            <h1 className={cn('text-sm font-bold leading-tight truncate', logoText)}>
-              GRUPO LOZCAM
-            </h1>
-            <p className={cn('text-[10px]', logoSub)}>Sistema de Gestión</p>
-          </div>
+          <h1 className={cn('text-sm font-bold leading-tight truncate', logoText)}>
+            GRUPO LOZCAM
+          </h1>
+          <p className={cn('text-[10px]', logoSub)}>Sistema de Gestión</p>
         </div>
       </div>
 

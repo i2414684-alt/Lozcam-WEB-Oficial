@@ -3,8 +3,9 @@
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
-import { Search, Sun, Moon, Monitor, ChevronDown, User, Settings, LogOut, Bell } from 'lucide-react'
+import { Search, Sun, Moon, Monitor, ChevronDown, User, Settings, LogOut, Bell, Menu } from 'lucide-react'
 import { useTheme } from '@/contexts/ThemeContext'
+import { useSidebar } from '@/contexts/SidebarContext'
 
 const ROL_LABEL: Record<string, string> = {
   gerente_general: 'Gerente General',
@@ -34,6 +35,8 @@ export default function Navbar({ profile }: { profile: Profile | null }) {
   const router = useRouter()
   const supabase = createClient()
   const { tema, setTema, isDark } = useTheme()
+
+  const { toggleSidebar } = useSidebar()
 
   const [menuAbierto, setMenuAbierto] = useState(false)
   const [temaMenuAbierto, setTemaMenuAbierto] = useState(false)
@@ -93,15 +96,24 @@ export default function Navbar({ profile }: { profile: Profile | null }) {
 
   return (
     <header
-      className={`${navBg} border-b px-6 py-3 flex items-center justify-between gap-4 transition-colors duration-200`}
+      className={`${navBg} border-b px-4 py-3 flex items-center justify-between gap-3 transition-colors duration-200`}
     >
-      <div className={`flex items-center gap-2 border rounded-xl px-4 py-2 w-full max-w-sm ${inputBg}`}>
-        <Search size={14} className="shrink-0 opacity-50" />
-        <input
-          type="text"
-          placeholder="Buscar obra, cliente, documento..."
-          className="bg-transparent text-sm outline-none w-full"
-        />
+      <div className="flex items-center gap-3 flex-1 min-w-0">
+        <button
+          onClick={toggleSidebar}
+          className={`flex items-center justify-center w-9 h-9 border rounded-xl transition-colors shrink-0 ${btnBg}`}
+          title="Colapsar/expandir menú"
+        >
+          <Menu size={15} />
+        </button>
+        <div className={`flex items-center gap-2 border rounded-xl px-4 py-2 w-full max-w-sm ${inputBg}`}>
+          <Search size={14} className="shrink-0 opacity-50" />
+          <input
+            type="text"
+            placeholder="Buscar obra, cliente, documento..."
+            className="bg-transparent text-sm outline-none w-full"
+          />
+        </div>
       </div>
 
       <div className="flex items-center gap-3 shrink-0">

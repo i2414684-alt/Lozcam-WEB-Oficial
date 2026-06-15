@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 
 export default function LoginPage() {
@@ -44,11 +45,13 @@ export default function LoginPage() {
       <div className="relative z-10 w-full max-w-md mx-4">
         <div className="bg-gray-900 border border-gray-800 rounded-3xl px-10 py-10 shadow-2xl">
           <div className="text-center mb-8">
-            <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
-            </div>
+            <Image
+              src="/logo-lozcam.png.png"
+              alt="Grupo LOZCAM"
+              width={80}
+              height={80}
+              className="mx-auto mb-4"
+            />
             <h1 className="text-3xl font-bold text-white">Iniciar Sesión</h1>
             <p className="text-gray-400 text-sm mt-2">Ingresa tus credenciales para continuar</p>
           </div>
