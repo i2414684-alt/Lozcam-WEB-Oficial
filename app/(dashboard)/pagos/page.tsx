@@ -1,18 +1,40 @@
-﻿import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { ESTADO_PAGO_LABEL, METODO_PAGO_LABEL } from '@/lib/types/pagos'
 import { EstadoBadge } from '@/components/EstadoBadge'
 import { FilaTabla } from '@/components/shared/FilaTabla'
+import { AccionesFila } from '@/components/shared/AccionesFila'
 
-export default async function PagosPage() {
-  const supabase = await createClient()
-  const { data: pagos } = await supabase
-    .from('pagos_clientes')
-    .select('*, obras (nombre), clientes (nombres, apellidos, razon_social)')
-    .order('created_at', { ascending: false })
+export default function PagosPage() {
+  const supabase = createClient()
 
-  const lista = pagos ?? []
+  const [lista, setLista] = useState<any[]>([])
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('pagos_clientes')
+      .select('*, obras (nombre), clientes (nombres, apellidos, razon_social)')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        setLista(data ?? [])
+        setCargando(false)
+      })
+  }, [])
+
+  async function handleEliminar(id: number | string) {
+    const { error } = await supabase
+      .from('pagos_clientes')
+      .delete()
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    setLista(prev => prev.filter(p => p.id !== id))
+  }
+
   const totalPagado = lista.filter(p => p.estado === 'pagado').reduce((sum, p) => sum + Number(p.monto), 0)
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
@@ -24,7 +46,7 @@ export default async function PagosPage() {
         <div>
           <h1 className="text-2xl font-bold" style={tp}>Pagos</h1>
           <p className="text-sm mt-0.5" style={ts}>
-            {lista.length} pago{lista.length !== 1 ? 's' : ''} registrado{lista.length !== 1 ? 's' : ''}
+            {cargando ? '...' : `${lista.length} pago${lista.length !== 1 ? 's' : ''} registrado${lista.length !== 1 ? 's' : ''}`}
           </p>
         </div>
         <Link href="/pagos/nuevo" className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -47,9 +69,13 @@ export default async function PagosPage() {
         </div>
       </div>
 
-      {lista.length === 0 ? (
+      {cargando ? (
         <div className="rounded-xl p-12 text-center" style={cardStyle}>
-          <p className="text-sm" style={ts}>No hay pagos registrados aÃºn</p>
+          <p className="text-sm" style={ts}>Cargando...</p>
+        </div>
+      ) : lista.length === 0 ? (
+        <div className="rounded-xl p-12 text-center" style={cardStyle}>
+          <p className="text-sm" style={ts}>No hay pagos registrados aún</p>
           <Link href="/pagos/nuevo" className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
             Registrar primer pago
           </Link>
@@ -63,10 +89,10 @@ export default async function PagosPage() {
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Obra</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Cliente</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Monto</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>MÃ©todo</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Método</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Estado</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Fecha</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>AcciÃ³n</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -76,7 +102,7 @@ export default async function PagosPage() {
                     <div className="font-medium" style={tp}>{p.concepto}</div>
                     {p.numero_cuota && <div className="text-xs mt-0.5" style={ts}>Cuota #{p.numero_cuota}</div>}
                   </td>
-                  <td className="px-4 py-3 text-xs" style={ts}>{p.obras?.nombre ?? 'â€”'}</td>
+                  <td className="px-4 py-3 text-xs" style={ts}>{p.obras?.nombre ?? '—'}</td>
                   <td className="px-4 py-3 text-xs" style={ts}>
                     {p.clientes?.razon_social ?? `${p.clientes?.nombres ?? ''} ${p.clientes?.apellidos ?? ''}`}
                   </td>
@@ -86,8 +112,15 @@ export default async function PagosPage() {
                     <EstadoBadge estado={p.estado} label={ESTADO_PAGO_LABEL[p.estado]} />
                   </td>
                   <td className="px-4 py-3 text-xs" style={ts}>{formatFecha(p.fecha_pago)}</td>
-                  <td className="px-4 py-3">
-                    <Link href={`/pagos/${p.id}`} className="text-amber-500 hover:text-amber-400 font-medium">Ver</Link>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <AccionesFila
+                      id={p.id}
+                      rutaBase="/pagos"
+                      onEliminar={handleEliminar}
+                      tituloModal="¿Eliminar este pago?"
+                      descripcionModal="Esta acción no se puede deshacer."
+                      mensajeExito="Pago eliminado"
+                    />
                   </td>
                 </FilaTabla>
               ))}
@@ -98,5 +131,3 @@ export default async function PagosPage() {
     </div>
   )
 }
-
-

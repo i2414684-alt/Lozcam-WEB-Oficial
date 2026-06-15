@@ -1,15 +1,39 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { createClient } from '@/lib/supabase/client'
 import { formatFecha, formatPEN } from '@/lib/utils/formatters'
 import { FilaTabla } from '@/components/shared/FilaTabla'
 import { EstadoBadge } from '@/components/EstadoBadge'
+import { AccionesFila } from '@/components/shared/AccionesFila'
 
-export default async function PresupuestosPage() {
-  const supabase = await createClient()
-  const { data: presupuestos } = await supabase
-    .from('presupuestos').select('*, obras(nombre)').order('created_at', { ascending: false })
+export default function PresupuestosPage() {
+  const supabase = createClient()
 
-  const lista = presupuestos ?? []
+  const [lista, setLista] = useState<any[]>([])
+  const [cargando, setCargando] = useState(true)
+
+  useEffect(() => {
+    supabase
+      .from('presupuestos')
+      .select('*, obras(nombre)')
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        setLista(data ?? [])
+        setCargando(false)
+      })
+  }, [])
+
+  async function handleEliminar(id: number | string) {
+    const { error } = await supabase
+      .from('presupuestos')
+      .delete()
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    setLista(prev => prev.filter(p => p.id !== id))
+  }
+
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
@@ -20,7 +44,7 @@ export default async function PresupuestosPage() {
         <div>
           <h1 className="text-2xl font-bold" style={tp}>Presupuestos</h1>
           <p className="text-sm mt-0.5" style={ts}>
-            {lista.length} presupuesto{lista.length !== 1 ? 's' : ''} registrado{lista.length !== 1 ? 's' : ''}
+            {cargando ? '...' : `${lista.length} presupuesto${lista.length !== 1 ? 's' : ''} registrado${lista.length !== 1 ? 's' : ''}`}
           </p>
         </div>
         <Link href="/presupuestos/nuevo" className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
@@ -28,7 +52,11 @@ export default async function PresupuestosPage() {
         </Link>
       </div>
 
-      {lista.length === 0 ? (
+      {cargando ? (
+        <div className="rounded-xl p-12 text-center" style={cardStyle}>
+          <p className="text-sm" style={ts}>Cargando...</p>
+        </div>
+      ) : lista.length === 0 ? (
         <div className="rounded-xl p-12 text-center" style={cardStyle}>
           <p className="text-sm" style={ts}>No hay presupuestos registrados aún</p>
           <Link href="/presupuestos/nuevo" className="mt-4 inline-block bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium">
@@ -46,7 +74,7 @@ export default async function PresupuestosPage() {
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Estado</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Vigente</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Fecha</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Acción</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -68,8 +96,15 @@ export default async function PresupuestosPage() {
                     }
                   </td>
                   <td className="px-4 py-3 text-xs" style={ts}>{formatFecha(p.created_at)}</td>
-                  <td className="px-4 py-3">
-                    <Link href={`/presupuestos/${p.id}`} className="text-amber-500 hover:text-amber-400 font-medium">Ver</Link>
+                  <td className="px-4 py-3" onClick={e => e.stopPropagation()}>
+                    <AccionesFila
+                      id={p.id}
+                      rutaBase="/presupuestos"
+                      onEliminar={handleEliminar}
+                      tituloModal="¿Eliminar este presupuesto?"
+                      descripcionModal="Esta acción no se puede deshacer y también eliminará sus partidas."
+                      mensajeExito="Presupuesto eliminado"
+                    />
                   </td>
                 </FilaTabla>
               ))}
@@ -80,4 +115,3 @@ export default async function PresupuestosPage() {
     </div>
   )
 }
-

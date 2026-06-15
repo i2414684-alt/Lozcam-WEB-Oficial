@@ -1,5 +1,10 @@
-import { createClient } from '@/lib/supabase/server'
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { Eye, Pencil } from 'lucide-react'
+import { createClient } from '@/lib/supabase/client'
+import { AccionesFila } from '@/components/shared/AccionesFila'
 
 const ROL_LABEL: Record<string, string> = {
   gerente_general: 'Gerente General', subgerente: 'Subgerente',
@@ -19,12 +24,39 @@ const ROL_COLOR: Record<string, string> = {
   vendedor: 'bg-pink-100 text-pink-700', cliente: 'bg-red-100 text-red-700',
 }
 
-export default async function PersonalPage() {
-  const supabase = await createClient()
-  const { data: personal } = await supabase
-    .from('profiles').select('*').eq('activo', true).neq('rol', 'cliente').order('nombre', { ascending: true })
+export default function PersonalPage() {
+  const supabase = createClient()
 
-  const lista = personal ?? []
+  const [lista, setLista] = useState<any[]>([])
+  const [cargando, setCargando] = useState(true)
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null)
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setCurrentUserId(user?.id ?? null)
+    })
+
+    supabase
+      .from('profiles')
+      .select('*')
+      .eq('activo', true)
+      .neq('rol', 'cliente')
+      .order('nombre', { ascending: true })
+      .then(({ data }) => {
+        setLista(data ?? [])
+        setCargando(false)
+      })
+  }, [])
+
+  async function handleEliminar(id: number | string) {
+    const { error } = await supabase
+      .from('profiles')
+      .update({ activo: false })
+      .eq('id', id)
+    if (error) throw new Error(error.message)
+    setLista(prev => prev.filter(p => p.id !== id))
+  }
+
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
   const tp = { color: 'var(--text-primary)' }
   const ts = { color: 'var(--text-secondary)' }
@@ -34,14 +66,20 @@ export default async function PersonalPage() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold" style={tp}>Personal</h1>
-          <p className="text-sm mt-0.5" style={ts}>{lista.length} miembro{lista.length !== 1 ? 's' : ''} del equipo</p>
+          <p className="text-sm mt-0.5" style={ts}>
+            {cargando ? '...' : `${lista.length} miembro${lista.length !== 1 ? 's' : ''} del equipo`}
+          </p>
         </div>
         <Link href="/personal/nuevo" className="bg-action hover:bg-action-hover text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors">
           + Nuevo usuario
         </Link>
       </div>
 
-      {lista.length === 0 ? (
+      {cargando ? (
+        <div className="rounded-xl p-12 text-center" style={cardStyle}>
+          <p className="text-sm" style={ts}>Cargando...</p>
+        </div>
+      ) : lista.length === 0 ? (
         <div className="rounded-xl p-12 text-center" style={cardStyle}>
           <p className="text-sm" style={ts}>No hay personal registrado aún</p>
         </div>
@@ -55,7 +93,7 @@ export default async function PersonalPage() {
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>DNI</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Teléfono</th>
                 <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Especialidades</th>
-                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Acción</th>
+                <th className="text-left px-4 py-3 text-xs font-semibold uppercase tracking-wide" style={ts}>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -78,7 +116,35 @@ export default async function PersonalPage() {
                   <td className="px-4 py-3 text-sm" style={ts}>{p.telefono ?? '—'}</td>
                   <td className="px-4 py-3 text-xs" style={ts}>{p.especialidades?.join(', ') ?? '—'}</td>
                   <td className="px-4 py-3">
-                    <Link href={`/personal/${p.id}`} className="text-amber-500 hover:text-amber-400 font-medium">Ver</Link>
+                    {p.id === currentUserId ? (
+                      <div className="flex items-center gap-1">
+                        <Link
+                          href={`/personal/${p.id}`}
+                          title="Ver"
+                          className="p-1.5 rounded-md transition-opacity opacity-50 hover:opacity-100"
+                          style={ts}
+                        >
+                          <Eye size={15} />
+                        </Link>
+                        <Link
+                          href={`/personal/${p.id}/editar`}
+                          title="Editar"
+                          className="p-1.5 rounded-md transition-opacity opacity-50 hover:opacity-100"
+                          style={ts}
+                        >
+                          <Pencil size={15} />
+                        </Link>
+                      </div>
+                    ) : (
+                      <AccionesFila
+                        id={p.id}
+                        rutaBase="/personal"
+                        onEliminar={handleEliminar}
+                        tituloModal="¿Eliminar este miembro del equipo?"
+                        descripcionModal="Dejará de aparecer en los listados."
+                        mensajeExito="Miembro eliminado"
+                      />
+                    )}
                   </td>
                 </tr>
               ))}
@@ -89,4 +155,3 @@ export default async function PersonalPage() {
     </div>
   )
 }
-
