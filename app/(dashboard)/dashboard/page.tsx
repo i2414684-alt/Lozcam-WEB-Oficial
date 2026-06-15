@@ -1,8 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
+import { getPerfil } from '@/lib/auth/getPerfil'
+import DashboardContador from '@/components/dashboards/DashboardContador'
 
 import { FilaTabla } from "./TablaHover"
-
-
 
 import Link from 'next/link'
 import { formatPEN } from '@/lib/utils/formatters'
@@ -10,6 +10,9 @@ import { ESTADO_OBRA_COLOR, ESTADO_OBRA_LABEL, TIPO_SERVICIO_LABEL } from '@/lib
 import { Building2, Users, ClipboardList, CreditCard } from 'lucide-react'
 
 export default async function DashboardPage() {
+  const perfil = await getPerfil()
+  if (perfil?.rol === 'contador') return <DashboardContador perfil={perfil} />
+
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const { data: profile } = await supabase
