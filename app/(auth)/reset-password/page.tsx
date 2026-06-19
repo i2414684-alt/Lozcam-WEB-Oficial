@@ -16,6 +16,16 @@ export default function ResetPasswordPage() {
   const [sesionValida, setSesionValida] = useState<boolean | null>(null)
 
   useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && window.top !== window.self) {
+        window.top!.location.href = window.location.href
+      }
+    } catch {
+      // window.top inaccesible por cross-origin — no hacer nada
+    }
+  }, [])
+
+  useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSesionValida(!!session)
     })
