@@ -2,7 +2,6 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
 
 const ROLES = [
@@ -21,7 +20,6 @@ const ROLES = [
 
 export default function NuevoUsuarioPage() {
   const router = useRouter()
-  const supabase = createClient()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -34,40 +32,37 @@ export default function NuevoUsuarioPage() {
     const data = new FormData(form)
 
     const email     = data.get('email') as string
-    const password  = data.get('password') as string
     const nombre    = data.get('nombre') as string
     const apellidos = data.get('apellidos') as string
     const rol       = data.get('rol') as string
     const dni       = (data.get('dni') as string) || null
     const telefono  = (data.get('telefono') as string) || null
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { nombre, apellidos, rol, dni, telefono } }
-    })
-
-    if (authError) {
-      toast.error(authError.message ?? 'No se pudo crear el usuario')
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
-    if (authData.user) {
-      await supabase.from('profiles').upsert({
-        id: authData.user.id,
-        nombre,
-        apellidos,
-        rol,
-        dni,
-        telefono,
+    try {
+      const res = await fetch('/api/personal', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, nombre, apellidos, rol, dni, telefono }),
       })
-    }
 
-    toast.success('Usuario creado')
-    router.push('/personal')
-    router.refresh()
+      const json = await res.json()
+
+      if (!json.ok) {
+        setError(json.error ?? 'No se pudo enviar la invitación')
+        toast.error(json.error ?? 'No se pudo enviar la invitación')
+        setLoading(false)
+        return
+      }
+
+      toast.success(`Invitación enviada a ${email}`)
+      router.push('/personal')
+      router.refresh()
+    } catch {
+      const msg = 'Error de red. Inténtalo de nuevo.'
+      setError(msg)
+      toast.error(msg)
+      setLoading(false)
+    }
   }
 
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
@@ -87,7 +82,9 @@ export default function NuevoUsuarioPage() {
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold" style={tp}>Nuevo usuario</h1>
-        <p className="text-sm mt-0.5" style={ts}>Crea una cuenta para un miembro del equipo</p>
+        <p className="text-sm mt-0.5" style={ts}>
+          El usuario recibirá un correo para establecer su contraseña
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="rounded-xl p-6 space-y-4" style={cardStyle}>
@@ -158,19 +155,6 @@ export default function NuevoUsuarioPage() {
           />
         </div>
 
-        <div>
-          <label className={labelClass} style={ts}>Contraseña *</label>
-          <input
-            name="password"
-            type="password"
-            required
-            minLength={8}
-            className={inputClass}
-            style={inputStyle}
-            placeholder="Mínimo 8 caracteres"
-          />
-        </div>
-
         {error && <p className="text-red-500 text-sm">{error}</p>}
 
         <div className="flex gap-3 pt-2">
@@ -187,7 +171,7 @@ export default function NuevoUsuarioPage() {
             disabled={loading}
             className="flex-1 bg-action hover:bg-action-hover text-white rounded-lg py-2 text-sm font-medium disabled:opacity-50 transition-colors"
           >
-            {loading ? 'Creando...' : 'Crear usuario'}
+            {loading ? 'Enviando invitación...' : 'Enviar invitación'}
           </button>
         </div>
       </form>
