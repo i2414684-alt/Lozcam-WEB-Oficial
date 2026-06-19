@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 import { cn } from '@/lib/utils/formatters'
+import { ROL_SISTEMA } from '@/lib/utils/constants'
 import { useTheme } from '@/contexts/ThemeContext'
 import { useSidebar } from '@/contexts/SidebarContext'
 import {
@@ -32,7 +33,7 @@ const navSections: NavSection[] = [
         label: 'Dashboard',
         href: '/dashboard',
         icon: <LayoutDashboard size={17} />,
-        roles: ['gerente_general', 'subgerente', 'administrador', 'contador'],
+        roles: Object.values(ROL_SISTEMA),
       },
     ],
   },
@@ -72,7 +73,7 @@ const navSections: NavSection[] = [
         label: 'Presupuestos',
         href: '/presupuestos',
         icon: <Calculator size={17} />,
-        roles: ['gerente_general', 'subgerente', 'administrador', 'ingeniero_residente', 'contador'],
+        roles: ['gerente_general', 'subgerente', 'administrador', 'contador'],
       },
       {
         label: 'Pagos',
