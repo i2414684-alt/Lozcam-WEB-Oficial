@@ -3,6 +3,7 @@ import { getPerfil } from '@/lib/auth/getPerfil'
 import DashboardContador from '@/components/dashboards/DashboardContador'
 import DashboardVendedor from '@/components/dashboards/DashboardVendedor'
 import DashboardIngeniero from '@/components/dashboards/DashboardIngeniero'
+import DashboardGerencial from '@/components/dashboards/DashboardGerencial'
 
 import { FilaTabla } from "./TablaHover"
 
@@ -16,6 +17,8 @@ export default async function DashboardPage() {
   if (perfil?.rol === 'contador')          return <DashboardContador  perfil={perfil} />
   if (perfil?.rol === 'vendedor')          return <DashboardVendedor  perfil={perfil} />
   if (perfil?.rol === 'ingeniero_residente') return <DashboardIngeniero perfil={perfil} />
+  if (['gerente_general', 'subgerente', 'administrador'].includes(perfil?.rol ?? ''))
+    return <DashboardGerencial perfil={perfil} />
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
