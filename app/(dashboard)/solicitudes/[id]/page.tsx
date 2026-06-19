@@ -9,6 +9,7 @@ import {
   ESTADO_SOLICITUD_LABEL,
 } from '@/lib/types/solicitudes'
 import { EstadoBadge } from '@/components/EstadoBadge'
+import { CambiarEstadoSolicitud } from '@/components/solicitudes/CambiarEstadoSolicitud'
 import { TIPO_SERVICIO_LABEL } from '@/lib/utils/constants'
 import { Pencil, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -132,6 +133,22 @@ export default function SolicitudDetallePage() {
             ← Volver
           </Link>
         </div>
+      </div>
+
+      {/* Cambio rápido de estado */}
+      <div className="rounded-xl px-5 py-4 mb-4 flex items-center gap-4 flex-wrap" style={cardStyle}>
+        <span className="text-sm font-medium shrink-0" style={{ color: 'var(--text-secondary)' }}>
+          Cambiar estado:
+        </span>
+        <CambiarEstadoSolicitud
+          key={sol.estado}
+          solicitudId={id}
+          estadoActual={sol.estado}
+          onSuccess={(nuevoEstado) => {
+            setSol((prev: any) => ({ ...prev, estado: nuevoEstado }))
+            router.refresh()
+          }}
+        />
       </div>
 
       {/* Cliente + Ubicación */}
