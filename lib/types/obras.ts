@@ -8,6 +8,8 @@ export interface Obra {
   distrito: string | null
   provincia: string | null
   departamento: string | null
+  latitud: number | null
+  longitud: number | null
   area_m2: number | null
   pisos: number | null
   monto_contrato: number

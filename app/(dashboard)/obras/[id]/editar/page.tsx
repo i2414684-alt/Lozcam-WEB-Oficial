@@ -2,9 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_SERVICIO_LABEL, ESTADO_OBRA_LABEL } from '@/lib/utils/constants'
 import { toast } from 'sonner'
+
+const MapaUbicacionObra = dynamic(
+  () => import('@/components/obras/MapaUbicacionObra'),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-[300px] rounded-lg animate-pulse"
+        style={{ background: 'var(--card-border)' }}
+      />
+    ),
+  },
+)
 
 export default function EditarObraPage() {
   const router = useRouter()
@@ -15,13 +29,17 @@ export default function EditarObraPage() {
   const [error, setError] = useState('')
   const [form, setForm] = useState<any>(null)
   const [clientes, setClientes] = useState<any[]>([])
+  const [coords, setCoords] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null })
 
   useEffect(() => {
     Promise.all([
       supabase.from('obras').select('*').eq('id', id).single(),
       supabase.from('clientes').select('id, nombres, apellidos, razon_social, tipo_persona').eq('activo', true),
     ]).then(([{ data: obra }, { data: clientesData }]) => {
-      if (obra) setForm(obra)
+      if (obra) {
+        setForm(obra)
+        setCoords({ lat: obra.latitud ?? null, lng: obra.longitud ?? null })
+      }
       setClientes(clientesData ?? [])
     })
   }, [id])
@@ -54,6 +72,8 @@ export default function EditarObraPage() {
       fecha_inicio_real: (data.get('fecha_inicio_real') as string) || null,
       fecha_fin_real: (data.get('fecha_fin_real') as string) || null,
       notas: (data.get('notas') as string) || null,
+      latitud: coords.lat,
+      longitud: coords.lng,
       updated_at: new Date().toISOString(),
     }
 
@@ -230,6 +250,15 @@ export default function EditarObraPage() {
               style={inputStyle}
             />
           </div>
+        </div>
+
+        {/* Ubicación en el mapa */}
+        <div>
+          <label className={labelClass} style={ts}>Ubicación en el mapa</label>
+          <MapaUbicacionObra
+            value={coords}
+            onChange={(lat, lng) => setCoords({ lat, lng })}
+          />
         </div>
 
         <div className="grid grid-cols-3 gap-4">

@@ -2,9 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import dynamic from 'next/dynamic'
 import { createClient } from '@/lib/supabase/client'
 import { TIPO_SERVICIO_LABEL, ESTADO_OBRA_LABEL } from '@/lib/utils/constants'
 import { toast } from 'sonner'
+
+const MapaUbicacionObra = dynamic(
+  () => import('@/components/obras/MapaUbicacionObra'),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className="h-[300px] rounded-lg animate-pulse"
+        style={{ background: 'var(--card-border)' }}
+      />
+    ),
+  },
+)
 
 export default function NuevaObraPage() {
   const router = useRouter()
@@ -12,6 +26,7 @@ export default function NuevaObraPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [clientes, setClientes] = useState<any[]>([])
+  const [coords, setCoords] = useState<{ lat: number | null; lng: number | null }>({ lat: null, lng: null })
 
   useEffect(() => {
     supabase
@@ -45,6 +60,8 @@ export default function NuevaObraPage() {
       fecha_inicio_planificada: (data.get('fecha_inicio_planificada') as string) || null,
       fecha_fin_planificada: (data.get('fecha_fin_planificada') as string) || null,
       notas: (data.get('notas') as string) || null,
+      latitud: coords.lat,
+      longitud: coords.lng,
     }
 
     const { error: sbError } = await supabase.from('obras').insert(payload)
@@ -191,6 +208,15 @@ export default function NuevaObraPage() {
               style={inputStyle}
             />
           </div>
+        </div>
+
+        {/* Ubicación en el mapa */}
+        <div>
+          <label className={labelClass} style={ts}>Ubicación en el mapa</label>
+          <MapaUbicacionObra
+            value={coords}
+            onChange={(lat, lng) => setCoords({ lat, lng })}
+          />
         </div>
 
         <div className="grid grid-cols-3 gap-4">
