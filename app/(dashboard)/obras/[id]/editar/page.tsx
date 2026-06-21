@@ -74,6 +74,7 @@ export default function EditarObraPage() {
       notas: (data.get('notas') as string) || null,
       latitud: coords.lat,
       longitud: coords.lng,
+      radio_metros: data.get('radio_metros') ? Number(data.get('radio_metros')) : (form.radio_metros ?? 200),
       updated_at: new Date().toISOString(),
     }
 
@@ -252,13 +253,29 @@ export default function EditarObraPage() {
           </div>
         </div>
 
-        {/* Ubicación en el mapa */}
+        {/* Ubicación en el mapa + radio GPS */}
         <div>
           <label className={labelClass} style={ts}>Ubicación en el mapa</label>
           <MapaUbicacionObra
             value={coords}
             onChange={(lat, lng) => setCoords({ lat, lng })}
           />
+        </div>
+
+        <div>
+          <label className={labelClass} style={ts}>Radio para marcar asistencia (metros)</label>
+          <input
+            name="radio_metros"
+            type="number"
+            min="50"
+            step="1"
+            defaultValue={form.radio_metros ?? 200}
+            className={inputClass}
+            style={inputStyle}
+          />
+          <p className="text-xs mt-1" style={ts}>
+            Distancia máxima desde la obra para que el personal pueda registrar asistencia por GPS. Por defecto 200 m.
+          </p>
         </div>
 
         <div className="grid grid-cols-3 gap-4">

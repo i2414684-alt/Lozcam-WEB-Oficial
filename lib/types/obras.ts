@@ -10,6 +10,7 @@ export interface Obra {
   departamento: string | null
   latitud: number | null
   longitud: number | null
+  radio_metros: number
   area_m2: number | null
   pisos: number | null
   monto_contrato: number
