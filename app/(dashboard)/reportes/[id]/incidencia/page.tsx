@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import { toast } from 'sonner'
+import { notificarIncidencia } from '@/lib/actions/notificar-incidencia'
 
 export default function NuevaIncidenciaPage() {
   const router = useRouter()
@@ -35,17 +36,21 @@ export default function NuevaIncidenciaPage() {
       .eq('id', reporteId)
       .single()
 
-    const { error: incError } = await supabase.from('incidencias').insert({
+    const tipo = data.get('tipo') as string
+    const descripcion = data.get('descripcion') as string
+    const gravedad = data.get('gravedad') as string
+
+    const { data: incData, error: incError } = await supabase.from('incidencias').insert({
       obra_id: reporte?.obra_id,
       reporte_id: reporteId,
-      tipo: data.get('tipo') as string,
-      descripcion: data.get('descripcion') as string,
-      gravedad: data.get('gravedad') as string,
+      tipo,
+      descripcion,
+      gravedad,
       afecta_plazo: afectaPlazo,
       dias_retraso: afectaPlazo ? Number(data.get('dias_retraso')) : 0,
       reportado_por: user.id,
       resuelto: false,
-    })
+    }).select('id')
 
     if (incError) {
       toast.error('No se pudo registrar la incidencia')
@@ -57,6 +62,17 @@ export default function NuevaIncidenciaPage() {
     toast.success('Incidencia registrada')
     router.push(`/reportes/${reporteId}`)
     router.refresh()
+
+    // Notifica en background — un fallo aquí no afecta al usuario
+    try {
+      notificarIncidencia({
+        obra_id: reporte?.obra_id,
+        incidencia_id: incData?.[0]?.id,
+        tipo,
+        descripcion,
+        gravedad,
+      })
+    } catch { /* silencioso */ }
   }
 
   const cardStyle = { background: 'var(--card-bg)', border: '1px solid var(--card-border)' }
