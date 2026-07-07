@@ -1,7 +1,7 @@
 'use client'
 
-import { toast } from 'sonner'
 import CambiarCorreoForm from '@/components/cuenta/CambiarCorreoForm'
+import CambiarContrasenaForm from '@/components/cuenta/CambiarContrasenaForm'
 
 const cardStyle = {
   background: 'var(--card-bg)',
@@ -45,18 +45,7 @@ export default function SeccionSeguridad() {
             </p>
           </div>
           <div className="px-6 py-5">
-            <button
-              type="button"
-              onClick={() => toast.info('Esta función estará disponible próximamente.')}
-              className="rounded-lg px-5 py-2 text-sm font-medium transition-colors"
-              style={{
-                border: '1px solid var(--card-border)',
-                color: 'var(--text-primary)',
-                background: 'transparent',
-              }}
-            >
-              Actualizar contraseña
-            </button>
+            <CambiarContrasenaForm />
           </div>
         </div>
 
