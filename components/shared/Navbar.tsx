@@ -1,6 +1,7 @@
 'use client'
 
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState, useRef, useEffect } from 'react'
 import { Search, Sun, Moon, Monitor, ChevronDown, User, Settings, LogOut, Bell, Menu } from 'lucide-react'
@@ -232,16 +233,20 @@ export default function Navbar({ profile }: { profile: Profile | null }) {
               </div>
 
               <div className="py-1">
-                <button
+                <Link
+                  href="/mi-perfil"
+                  onClick={() => setMenuAbierto(false)}
                   className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs transition-colors ${dropItem}`}
                 >
                   <User size={14} /> Mi perfil
-                </button>
-                <button
+                </Link>
+                <Link
+                  href="/mi-cuenta"
+                  onClick={() => setMenuAbierto(false)}
                   className={`w-full flex items-center gap-3 px-4 py-2.5 text-xs transition-colors ${dropItem}`}
                 >
                   <Settings size={14} /> Configuración
-                </button>
+                </Link>
               </div>
 
               <div className={`border-t ${dropDivider} py-1`}>

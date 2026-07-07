@@ -5,6 +5,8 @@ import DashboardVendedor from '@/components/dashboards/DashboardVendedor'
 import DashboardIngeniero from '@/components/dashboards/DashboardIngeniero'
 import DashboardGerencial from '@/components/dashboards/DashboardGerencial'
 import DashboardMaestroObra from '@/components/dashboards/DashboardMaestroObra'
+import DashboardArquitecto from '@/components/dashboards/DashboardArquitecto'
+import DashboardTecnicoAutocad from '@/components/dashboards/DashboardTecnicoAutocad'
 
 import Link from 'next/link'
 import { formatPEN } from '@/lib/utils/formatters'
@@ -19,6 +21,8 @@ export default async function DashboardPage() {
   if (['gerente_general', 'subgerente', 'administrador'].includes(perfil?.rol ?? ''))
     return <DashboardGerencial perfil={perfil} />
   if (perfil?.rol === 'maestro_obra')      return <DashboardMaestroObra perfil={perfil} />
+  if (perfil?.rol === 'arquitecto')        return <DashboardArquitecto     perfil={perfil} />
+  if (perfil?.rol === 'tecnico_autocad')  return <DashboardTecnicoAutocad perfil={perfil} />
 
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
