@@ -6,7 +6,7 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
 
   // ── Rutas públicas: no requieren autenticación ────────────────────────────
-  const rutasPublicas = ['/', '/landing', '/login', '/recuperar', '/reset-password']
+  const rutasPublicas = ['/', '/landing', '/login', '/recuperar', '/reset-password', '/registro-cliente']
   const esPublica = rutasPublicas.some(r =>
     pathname === r || pathname.startsWith(r + '/')
   )
