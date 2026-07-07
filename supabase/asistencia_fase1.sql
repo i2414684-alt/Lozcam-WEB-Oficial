@@ -105,99 +105,66 @@ $$;
 -- Devuelve: jsonb con { ok, mensaje, asistencia_id, distancia_metros }
 -- SECURITY DEFINER para poder leer obras/profiles y escribir asistencias
 -- de forma controlada, validando internamente el rol del que llama.
-create or replace function marcar_asistencia(
-  p_obra_id bigint,
-  p_lat     double precision,
-  p_lng     double precision,
-  p_tipo    text,
-  p_foto_url text default null
-) returns jsonb
-language plpgsql
-security definer
-set search_path = public
-as $$
+CREATE OR REPLACE FUNCTION public.marcar_asistencia(p_obra_id bigint, p_lat double precision, p_lng double precision, p_tipo text, p_foto_url text DEFAULT NULL::text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO 'public'
+AS $function$
 declare
-  v_uid        uuid := auth.uid();
-  v_rol        constructora.rol_sistema;
-  v_activo     boolean;
-  v_obra_lat   double precision;
-  v_obra_lng   double precision;
-  v_radio      integer;
-  v_distancia  double precision;
+  v_uid uuid := auth.uid();
+  v_rol constructora.rol_sistema;
+  v_activo boolean;
+  v_obra_lat double precision;
+  v_obra_lng double precision;
+  v_radio integer;
+  v_distancia double precision;
   v_asistencia asistencias%rowtype;
 begin
-  -- 1. Usuario autenticado
   if v_uid is null then
-    return jsonb_build_object('ok', false, 'mensaje', 'No autenticado');
+    raise exception 'No autenticado';
   end if;
-
-  -- 2. Validar tipo
   if p_tipo not in ('entrada', 'salida') then
     return jsonb_build_object('ok', false, 'mensaje', 'Tipo inválido (use entrada o salida)');
   end if;
-
-  -- 3. Obtener rol y estado del usuario; solo personal de campo marca
-  select rol, activo into v_rol, v_activo
-  from profiles where id = v_uid;
-
+  select rol, activo into v_rol, v_activo from profiles where id = v_uid;
   if v_activo is not true then
     return jsonb_build_object('ok', false, 'mensaje', 'Usuario inactivo');
   end if;
-
   if v_rol not in ('personal_obra'::constructora.rol_sistema,
                    'maestro_obra'::constructora.rol_sistema) then
     return jsonb_build_object('ok', false, 'mensaje', 'Tu rol no registra asistencia de campo');
   end if;
-
-  -- 4. Obtener coordenadas y radio de la obra
-  select latitud, longitud, radio_metros
-    into v_obra_lat, v_obra_lng, v_radio
+  select latitud, longitud, radio_metros into v_obra_lat, v_obra_lng, v_radio
   from obras where id = p_obra_id and activo = true;
-
   if not found then
     return jsonb_build_object('ok', false, 'mensaje', 'Obra no encontrada');
   end if;
-
   if v_obra_lat is null or v_obra_lng is null then
     return jsonb_build_object('ok', false, 'mensaje', 'La obra no tiene ubicación GPS configurada');
   end if;
-
-  -- 5. Validar radio (Haversine)
   v_distancia := distancia_haversine_metros(p_lat, p_lng, v_obra_lat, v_obra_lng);
-
   if v_distancia is null then
     return jsonb_build_object('ok', false, 'mensaje', 'Ubicación inválida');
   end if;
-
   if v_distancia > v_radio then
-    return jsonb_build_object(
-      'ok', false,
+    return jsonb_build_object('ok', false,
       'mensaje', 'Estás fuera del rango de la obra (' || round(v_distancia)::text || 'm de ' || v_radio::text || 'm)',
-      'distancia_metros', round(v_distancia)
-    );
+      'distancia_metros', round(v_distancia));
   end if;
-
-  -- 6. Buscar la asistencia de hoy de este usuario en esta obra
-  select * into v_asistencia
-  from asistencias
+  select * into v_asistencia from asistencias
   where perfil_id = v_uid and obra_id = p_obra_id and fecha = current_date;
-
-  -- 7a. ENTRADA
   if p_tipo = 'entrada' then
     if found and v_asistencia.hora_entrada is not null then
       return jsonb_build_object('ok', false, 'mensaje', 'Ya marcaste entrada hoy');
     end if;
-
     insert into asistencias (obra_id, perfil_id, fecha, hora_entrada, lat_entrada, lng_entrada, foto_entrada_url)
     values (p_obra_id, v_uid, current_date, now(), p_lat, p_lng, p_foto_url)
     on conflict (perfil_id, obra_id, fecha)
     do update set hora_entrada = now(), lat_entrada = p_lat, lng_entrada = p_lng, foto_entrada_url = p_foto_url
     returning * into v_asistencia;
-
     return jsonb_build_object('ok', true, 'mensaje', 'Entrada registrada',
-                              'asistencia_id', v_asistencia.id, 'distancia_metros', round(v_distancia));
-
-  -- 7b. SALIDA
+      'asistencia_id', v_asistencia.id, 'distancia_metros', round(v_distancia));
   else
     if not found or v_asistencia.hora_entrada is null then
       return jsonb_build_object('ok', false, 'mensaje', 'No has marcado entrada hoy');
@@ -205,17 +172,15 @@ begin
     if v_asistencia.hora_salida is not null then
       return jsonb_build_object('ok', false, 'mensaje', 'Ya marcaste salida hoy');
     end if;
-
     update asistencias
       set hora_salida = now(), lat_salida = p_lat, lng_salida = p_lng, foto_salida_url = p_foto_url
     where id = v_asistencia.id
     returning * into v_asistencia;
-
     return jsonb_build_object('ok', true, 'mensaje', 'Salida registrada',
-                              'asistencia_id', v_asistencia.id, 'distancia_metros', round(v_distancia));
+      'asistencia_id', v_asistencia.id, 'distancia_metros', round(v_distancia));
   end if;
 end;
-$$;
+$function$
 
 
 -- ----------------------------------------------------------------------------
